@@ -21,7 +21,9 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SignUp1Activity" />
+        <activity android:name=".SignUp2Activity"></activity>
     </application>
 
 </manifest>

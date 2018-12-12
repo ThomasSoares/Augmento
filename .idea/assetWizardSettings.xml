@@ -14,11 +14,11 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="height" value="3" />
-                            <entry key="outputName" value="ic_email_edit_text" />
+                            <entry key="height" value="48" />
+                            <entry key="outputName" value="ic_back" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/TEST/email_edit_text.svg" />
-                            <entry key="width" value="300" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/TEST/back.svg" />
+                            <entry key="width" value="138" />
                           </map>
                         </option>
                       </PersistentState>
