@@ -12,6 +12,15 @@ public class StartActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocalStorage localStorage=new LocalStorage(getApplicationContext());
+        /*if(localStorage.getStorage(getString(R.string.username))!=null)
+        {
+            Intent intent=new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }*/
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 

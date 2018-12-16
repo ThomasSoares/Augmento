@@ -85,14 +85,16 @@ public class SignUp1Activity extends AppCompatActivity implements View.OnClickLi
         {
             firstNameEditText.setError("Cannot be empty");
         }
-        else if(isEmpty(firstNameEditText))
+        else if(isEmpty(lastNameEditText))
         {
             lastNameEditText.setError("Cannot be empty");
         }
         else
         {
             Intent intent=new Intent(getApplicationContext(), SignUp2Activity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("firstName",firstNameEditText.getText().toString());
+            intent.putExtra("lastName",lastNameEditText.getText().toString());
+            intent.putExtra("email",emailEditText.getText().toString());
             startActivity(intent);
         }
     }

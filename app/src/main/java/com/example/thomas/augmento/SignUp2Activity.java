@@ -88,6 +88,16 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         else
         {
             Intent intent=new Intent(getApplicationContext(), MainActivity.class);
+
+            User user=new User(usernameEditText.getText().toString(), getIntent().getStringExtra("firstName"), getIntent().getStringExtra("lastName"), getIntent().getStringExtra("email"));
+
+            //adding in the local storage
+            LocalStorage localStorage=new LocalStorage(getApplicationContext());
+            localStorage.addStorage(getString(R.string.username),user.getUsername());
+            localStorage.addStorage(getString(R.string.firstName),user.getFirstName());
+            localStorage.addStorage(getString(R.string.lastName),user.getLastName());
+            localStorage.addStorage(getString(R.string.email),user.getEmail());
+
             startActivity(intent);
         }
     }
