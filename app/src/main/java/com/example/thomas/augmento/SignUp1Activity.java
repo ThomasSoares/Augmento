@@ -92,6 +92,7 @@ public class SignUp1Activity extends AppCompatActivity implements View.OnClickLi
         else
         {
             Intent intent=new Intent(getApplicationContext(), SignUp2Activity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         }
     }

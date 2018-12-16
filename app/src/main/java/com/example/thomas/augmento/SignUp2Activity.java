@@ -87,7 +87,8 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         }
         else
         {
-            Toast.makeText(getApplicationContext(),"Signup Successful!", Toast.LENGTH_SHORT).show();
+            Intent intent=new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
         }
     }
 
