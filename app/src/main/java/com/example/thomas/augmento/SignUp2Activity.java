@@ -1,6 +1,7 @@
 package com.example.thomas.augmento;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,8 +11,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class SignUp2Activity extends AppCompatActivity implements View.OnClickListener,View.OnKeyListener{
 
@@ -20,6 +32,12 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
     EditText usernameEditText, passwordEditText;
     ImageView cancelButton;
     ImageView finishButton,backButon;
+
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference usersRef;
+    String currentUserID;
+    ProgressBar progressBarSignUp;
 
     public void initialize()
     {
@@ -32,6 +50,12 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         finishButton=findViewById(R.id.finishButton);
         backButon=findViewById(R.id.backButton);
         cancelButton=findViewById(R.id.cancelButton);
+        progressBarSignUp=findViewById(R.id.progressBarSignUp);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        currentUserID=mAuth.getCurrentUser().getUid();
+        usersRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
     }
 
     public void listeners()
@@ -87,19 +111,71 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         }
         else
         {
-            Intent intent=new Intent(getApplicationContext(), MainActivity.class);
+            progressBarSignUp.setVisibility(View.VISIBLE);
+            signUpUsers();
 
-            User user=new User(usernameEditText.getText().toString(), getIntent().getStringExtra("firstName"), getIntent().getStringExtra("lastName"), getIntent().getStringExtra("email"));
-
-            //adding in the local storage
-            LocalStorage localStorage=new LocalStorage(getApplicationContext());
-            localStorage.addStorage(getString(R.string.username),user.getUsername());
-            localStorage.addStorage(getString(R.string.firstName),user.getFirstName());
-            localStorage.addStorage(getString(R.string.lastName),user.getLastName());
-            localStorage.addStorage(getString(R.string.email),user.getEmail());
-
-            startActivity(intent);
         }
+    }
+
+    public void saveUserInfo()
+    {
+        final int[] flag = {0};
+
+        String firstName=getIntent().getStringExtra("firstName");
+        String lastName=getIntent().getStringExtra("lastName");
+        String username=usernameEditText.getText().toString();
+
+        HashMap userMap=new HashMap();
+        userMap.put(getString(R.string.firstName),firstName);
+        userMap.put(getString(R.string.lastName),lastName);
+        userMap.put(getString(R.string.username),username);
+
+        usersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                Intent intent=new Intent(getApplicationContext(), MainActivity.class);
+                progressBarSignUp.setVisibility(View.GONE);
+                startActivity(intent);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBarSignUp.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(),"SignUp Failed",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    public void signUpUsers()
+    {
+        //Method to sign up users
+
+        mAuth.createUserWithEmailAndPassword(getIntent().getStringExtra("email"), passwordEditText.getText().toString())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            User user=new User(usernameEditText.getText().toString(), getIntent().getStringExtra("firstName"), getIntent().getStringExtra("lastName"), getIntent().getStringExtra("email"));
+
+                            //adding in the local storage
+                            LocalStorage localStorage=new LocalStorage(getApplicationContext());
+                            localStorage.addStorage(getString(R.string.username),user.getUsername());
+                            localStorage.addStorage(getString(R.string.firstName),user.getFirstName());
+                            localStorage.addStorage(getString(R.string.lastName),user.getLastName());
+                            localStorage.addStorage(getString(R.string.email),user.getEmail());
+
+                            saveUserInfo();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            progressBarSignUp.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(),"SignUp Failed",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
     }
 
     @Override

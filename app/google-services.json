@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "522787415300",
+    "firebase_url": "https://augmento-84ddb.firebaseio.com",
+    "project_id": "augmento-84ddb",
+    "storage_bucket": "augmento-84ddb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522787415300:android:7533a979c1985f93",
+        "android_client_info": {
+          "package_name": "com.example.thomas.augmento"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "522787415300-vm8l02vu4pkch1djv48ano7vi1clkg24.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKyk3qdMbpjrMXXV2kQJA77aQVQtI9p84"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
