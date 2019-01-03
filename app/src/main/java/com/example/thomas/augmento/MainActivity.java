@@ -2,21 +2,17 @@ package com.example.thomas.augmento;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,16 +32,20 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(fragment);
                     return true;
                 case R.id.navigation_search:
-
+                    fragment=new SearchFragment();
+                    loadFragment(fragment);
                     return true;
                 case R.id.navigation_notification:
-
+                    fragment=new NotificationsFragment();
+                    loadFragment(fragment);
                     return true;
                 case R.id.navigation_augment:
-
+                    Intent intent=new Intent(getApplicationContext(),AugmentActivity.class);
+                    startActivity(intent);
                     return true;
                 case R.id.navigation_profile:
-
+                    fragment=new ProfileFragment();
+                    loadFragment(fragment);
                     return true;
             }
             return false;
@@ -74,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        android.support.v7.widget.Toolbar toolbar=findViewById(R.id.toolbar);
+        androidx.appcompat.widget.Toolbar toolbar=findViewById(R.id.toolbar);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         settingsImageView=findViewById(R.id.settingsImageView);

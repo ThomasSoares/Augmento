@@ -1,8 +1,8 @@
 package com.example.thomas.augmento;
 
 import android.content.Intent;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SignUp1Activity extends AppCompatActivity implements View.OnClickListener,View.OnKeyListener{
 

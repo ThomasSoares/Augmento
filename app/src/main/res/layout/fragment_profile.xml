@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary"
+    tools:context=".ProfileFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="20dp"
+            app:layout_constraintGuide_percent="0.0" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="93dp"
+            android:layout_height="93dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/profile_picture"
+            app:civ_border_color="@color/colorAccent"
+            app:civ_border_width="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/editImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="@+id/profileImageView"
+            app:layout_constraintEnd_toEndOf="@+id/profileImageView" />
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ben Shapiro"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
+
+        <TextView
+            android:id="@+id/descriptionTextView"
+            android:layout_width="243dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="I am the greatest debater in the world. No one beats me because I have facts. I am a myth."
+            android:textAlignment="center"
+            android:textColor="@color/colorTextFade"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+        <TextView
+            android:id="@+id/postCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="36"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+
+        <TextView
+            android:id="@+id/followerCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="617"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/descriptionTextView"
+            app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+
+        <TextView
+            android:id="@+id/followingCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="259"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/descriptionTextView"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+
+        <TextView
+            android:id="@+id/postTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="posts"
+            android:textColor="@color/colorTextFade"
+            app:layout_constraintEnd_toEndOf="@+id/postCountTextView"
+            app:layout_constraintStart_toStartOf="@+id/postCountTextView"
+            app:layout_constraintTop_toBottomOf="@+id/postCountTextView" />
+
+        <TextView
+            android:id="@+id/followerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="followers"
+            android:textColor="@color/colorTextFade"
+            app:layout_constraintEnd_toEndOf="@+id/followerCountTextView"
+            app:layout_constraintStart_toStartOf="@+id/followerCountTextView"
+            app:layout_constraintTop_toBottomOf="@+id/followerCountTextView" />
+
+        <TextView
+            android:id="@+id/followingTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="following"
+            android:textColor="@color/colorTextFade"
+            app:layout_constraintEnd_toEndOf="@+id/followingCountTextView"
+            app:layout_constraintStart_toStartOf="@+id/followingCountTextView"
+            app:layout_constraintTop_toBottomOf="@+id/followingCountTextView" />
+
+        <ImageView
+            android:id="@+id/purpleLine1ImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:srcCompat="@drawable/ic_profile_purple_line"
+            app:layout_constraintEnd_toStartOf="@+id/followerCountTextView"
+            app:layout_constraintStart_toEndOf="@+id/postCountTextView"
+            app:layout_constraintTop_toTopOf="@+id/followerCountTextView" />
+
+        <ImageView
+            android:id="@+id/purpleLine2ImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:srcCompat="@drawable/ic_profile_purple_line"
+            app:layout_constraintEnd_toStartOf="@+id/followingCountTextView"
+            app:layout_constraintStart_toEndOf="@+id/followerCountTextView"
+            app:layout_constraintTop_toTopOf="@+id/followerCountTextView" />
+
+        <ImageView
+            android:id="@+id/endLineImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:srcCompat="@drawable/ic_end_profile_line"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/followerTextView" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
