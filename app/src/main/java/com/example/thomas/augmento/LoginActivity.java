@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Button signInButton;
     ImageView cancelButton;
     private FirebaseAuth mAuth;
+    ProgressBar loginProgressBar;
     private DatabaseReference usersRef;
 
     public void initialize()
@@ -41,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordEditText=findViewById(R.id.passwordEditText);
         signInButton=findViewById(R.id.signInButton);
         cancelButton=findViewById(R.id.cancelButton);
+        loginProgressBar=findViewById(R.id.loginProgressBar);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -83,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public void loginClicked()
     {
+
         hideKeyboard();
 
         if(isEmpty(emailEditText) && isEmpty(passwordEditText))
@@ -100,6 +104,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         else
         {
+            loginProgressBar.setVisibility(View.VISIBLE);
             mAuth.signInWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -108,12 +113,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 // Sign in success, update UI with the signed-in user's information
 
                                 checkUserExistence();
+                                loginProgressBar.setVisibility(View.GONE);
 
                                 Intent intent=new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(intent);
                                 finish();
                             } else {
                                 // If sign in fails, display a message to the user.
+                                loginProgressBar.setVisibility(View.GONE);
                                 Toast.makeText(getApplicationContext(),"Signin Failed!",Toast.LENGTH_SHORT).show();
                             }
                         }

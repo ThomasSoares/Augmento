@@ -50,11 +50,8 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         backButon=findViewById(R.id.backButton);
         cancelButton=findViewById(R.id.cancelButton);
         progressBarSignUp=findViewById(R.id.progressBarSignUp);
-
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        currentUserID=mAuth.getCurrentUser().getUid();
-        usersRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+
     }
 
     public void listeners()
@@ -128,6 +125,11 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         userMap.put(getString(R.string.firstName),firstName);
         userMap.put(getString(R.string.lastName),lastName);
         userMap.put(getString(R.string.username),username);
+
+        // Initialize Firebase Auth
+
+        currentUserID=mAuth.getCurrentUser().getUid();
+        usersRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
 
         usersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override

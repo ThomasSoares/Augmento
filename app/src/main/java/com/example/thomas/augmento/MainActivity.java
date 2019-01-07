@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     ImageView settingsImageView, messageImageView;
+    FirebaseAuth mAuth;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -28,14 +29,20 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment;
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    Toast.makeText(getApplicationContext(),mAuth.getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
+
                     fragment=new HomeFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.navigation_search:
+                    Toast.makeText(getApplicationContext(),mAuth.getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
+
                     fragment=new SearchFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.navigation_notification:
+                    Toast.makeText(getApplicationContext(),mAuth.getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
+
                     fragment=new NotificationsFragment();
                     loadFragment(fragment);
                     return true;
@@ -75,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         androidx.appcompat.widget.Toolbar toolbar=findViewById(R.id.toolbar);
+        mAuth=FirebaseAuth.getInstance();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
