@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,6 +22,8 @@ import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -66,6 +69,7 @@ public class ProfileFragment extends Fragment {
         UserRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
         UserProfileImageRef=FirebaseStorage.getInstance().getReference().child("Profile Images");
 
+        setProfilePhoto();
     }
 
     public void listeners()
@@ -75,6 +79,29 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
 
                 getPhoto();
+            }
+        });
+    }
+
+    public void setProfilePhoto()
+    {
+        profilePicProgressBar.setVisibility(View.VISIBLE);
+
+        StorageReference pathReference=UserProfileImageRef.child(currentUserID+".jpg");
+        final long ONE_MEGABYTE=1024*1024;
+
+        pathReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap= BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, profileImageView.getWidth(), profileImageView.getHeight(), false));
+                profilePicProgressBar.setVisibility(View.GONE);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                profilePicProgressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Failed to load profile image",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -177,8 +204,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -188,11 +213,11 @@ public class ProfileFragment extends Fragment {
         parentHolder= inflater.inflate(R.layout.fragment_profile, container, false);
         initialize();
         listeners();
-
+        /*
         if(checkSelfPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED)
         {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
-        }
+        }*/
         return parentHolder;
     }
 
