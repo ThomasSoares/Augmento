@@ -29,19 +29,19 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment;
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    Toast.makeText(getApplicationContext(),mAuth.getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
+
 
                     fragment=new HomeFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.navigation_search:
-                    Toast.makeText(getApplicationContext(),mAuth.getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
+
 
                     fragment=new SearchFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.navigation_notification:
-                    Toast.makeText(getApplicationContext(),mAuth.getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
+
 
                     fragment=new NotificationsFragment();
                     loadFragment(fragment);
