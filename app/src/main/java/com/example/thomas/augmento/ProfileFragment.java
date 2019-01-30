@@ -47,11 +47,12 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference UserRef;
     private StorageReference UserProfileImageRef;
     String currentUserID;
+    String downloadUrl=null;
 
     public void initialize()
     {
         editImageView=parentHolder.findViewById(R.id.editImageView);
-        profileImageView=parentHolder.findViewById(R.id.profileImageView);
+        profileImageView=parentHolder.findViewById(R.id.profileImageView1);
         nameTextView=parentHolder.findViewById(R.id.nameTextView);
 
         profilePicProgressBar=parentHolder.findViewById(R.id.profilePicProgressBar);
@@ -142,7 +143,7 @@ public class ProfileFragment extends Fragment {
                 Uri resultUri=result.getUri();
                 profilePicProgressBar.setVisibility(View.VISIBLE);
 
-                StorageReference filePath=UserProfileImageRef.child(currentUserID + ".jpg");
+                final StorageReference filePath=UserProfileImageRef.child(currentUserID + ".jpg");
 
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -151,25 +152,32 @@ public class ProfileFragment extends Fragment {
                         {
                             Toast.makeText(getContext(),"Profile Image stored in storage",Toast.LENGTH_SHORT).show();
 
-                            final String downloadUrl=task.getResult().getUploadSessionUri().toString();
-                            Toast.makeText(getContext(),downloadUrl, Toast.LENGTH_SHORT).show();
-                            UserRef.child("ProfileImage").setValue(downloadUrl)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful())
-                                            {
-                                                profilePicProgressBar.setVisibility(View.GONE);
-                                                Toast.makeText(getContext(),"Image stored in database", Toast.LENGTH_SHORT).show();
-                                            }
-                                            else
-                                            {
-                                                profilePicProgressBar.setVisibility(View.GONE);
-                                                String message=task.getException().getMessage();
-                                                Toast.makeText(getContext(),"Error Occured: "+message, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
+
+                            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    downloadUrl=uri.toString();
+
+                                    UserRef.child("ProfileImage").setValue(downloadUrl)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful())
+                                                    {
+                                                        profilePicProgressBar.setVisibility(View.GONE);
+                                                        Toast.makeText(getContext(),"Image stored in database", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else
+                                                    {
+                                                        profilePicProgressBar.setVisibility(View.GONE);
+                                                        String message=task.getException().getMessage();
+                                                        Toast.makeText(getContext(),"Error Occured: "+message, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                }
+                            });
+
                         }
                     }
                 });

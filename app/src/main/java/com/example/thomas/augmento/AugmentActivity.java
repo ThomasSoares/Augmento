@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -47,7 +49,10 @@ public class AugmentActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     String currentUserID;
 
-    private String saveCurrentDate, saveCurrentTime, postRandomName, downloadUrl;
+    private String saveCurrentDate;
+    private String saveCurrentTime;
+    private String postRandomName;
+    private String downloadUrl;
 
     public void initialize() {
         importImageView = findViewById(R.id.importImageView);
@@ -120,16 +125,27 @@ public class AugmentActivity extends AppCompatActivity {
 
         postRandomName=currentUserID+saveCurrentDate+saveCurrentTime;
 
-        StorageReference filePath=postImagesReference.child("Post Images").child(ImageUri.getLastPathSegment()+postRandomName+".jpg");
+        final StorageReference filePath=postImagesReference.child("Post Images").child(ImageUri.getLastPathSegment()+postRandomName+".jpg");
+
+
+
         filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful())
                 {
-                    downloadUrl=task.getResult().getUploadSessionUri().toString();
-                    savingPostInfoToDatabase();
 
-                    finish();
+                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            downloadUrl=uri.toString();
+                            savingPostInfoToDatabase();
+                        }
+                    });
+
+
+
+
                     Toast.makeText(getApplicationContext(),"Image Uploaded Successfully!",Toast.LENGTH_SHORT).show();
                 }
                 else

@@ -22,7 +22,7 @@
             app:layout_constraintGuide_percent="0.0" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profileImageView"
+            android:id="@+id/profileImageView1"
             android:layout_width="93dp"
             android:layout_height="93dp"
             android:layout_marginStart="8dp"
@@ -40,8 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="@+id/profileImageView"
-            app:layout_constraintEnd_toEndOf="@+id/profileImageView" />
+            app:layout_constraintBottom_toBottomOf="@+id/profileImageView1"
+            app:layout_constraintEnd_toEndOf="@+id/profileImageView1" />
 
         <TextView
             android:id="@+id/nameTextView"
@@ -54,7 +54,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
+            app:layout_constraintTop_toBottomOf="@+id/profileImageView1" />
 
         <TextView
             android:id="@+id/descriptionTextView"
@@ -175,10 +175,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/profileImageView"
-            app:layout_constraintEnd_toEndOf="@+id/profileImageView"
-            app:layout_constraintStart_toStartOf="@+id/profileImageView"
-            app:layout_constraintTop_toTopOf="@+id/profileImageView" />
+            app:layout_constraintBottom_toBottomOf="@+id/profileImageView1"
+            app:layout_constraintEnd_toEndOf="@+id/profileImageView1"
+            app:layout_constraintStart_toStartOf="@+id/profileImageView1"
+            app:layout_constraintTop_toTopOf="@+id/profileImageView1" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
