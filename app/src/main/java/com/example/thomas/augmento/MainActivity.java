@@ -21,43 +21,39 @@ public class MainActivity extends AppCompatActivity {
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            LocalStorage localStorage=new LocalStorage(getApplicationContext());
-            Fragment fragment;
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
+            = item -> {
+                LocalStorage localStorage=new LocalStorage(getApplicationContext());
+                Fragment fragment;
+                switch (item.getItemId()) {
+                    case R.id.navigation_home:
 
 
-                    fragment=new HomeFragment();
-                    loadFragment(fragment);
-                    return true;
-                case R.id.navigation_search:
+                        fragment=new HomeFragment();
+                        loadFragment(fragment);
+                        return true;
+                    case R.id.navigation_search:
 
 
-                    fragment=new SearchFragment();
-                    loadFragment(fragment);
-                    return true;
-                case R.id.navigation_notification:
+                        fragment=new SearchFragment();
+                        loadFragment(fragment);
+                        return true;
+                    case R.id.navigation_notification:
 
 
-                    fragment=new NotificationsFragment();
-                    loadFragment(fragment);
-                    return true;
-                case R.id.navigation_augment:
-                    Intent intent=new Intent(getApplicationContext(),AugmentActivity.class);
-                    startActivity(intent);
-                    return true;
-                case R.id.navigation_profile:
-                    fragment=new ProfileFragment();
-                    loadFragment(fragment);
-                    return true;
-            }
-            return false;
-        }
-    };
+                        fragment=new NotificationsFragment();
+                        loadFragment(fragment);
+                        return true;
+                    case R.id.navigation_augment:
+                        Intent intent=new Intent(getApplicationContext(),AugmentActivity.class);
+                        startActivity(intent);
+                        return true;
+                    case R.id.navigation_profile:
+                        fragment=new ProfileFragment();
+                        loadFragment(fragment);
+                        return true;
+                }
+                return false;
+            };
 
     private void loadFragment(Fragment fragment)
     {
@@ -90,18 +86,8 @@ public class MainActivity extends AppCompatActivity {
         settingsImageView=findViewById(R.id.settingsImageView);
         messageImageView=findViewById(R.id.messageImageView);
 
-        settingsImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout();
-            }
-        });
-        messageImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Message Clicked!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        settingsImageView.setOnClickListener(v -> logout());
+        messageImageView.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "Message Clicked!", Toast.LENGTH_SHORT).show());
 
         loadFragment(new HomeFragment());
     }

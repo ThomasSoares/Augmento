@@ -71,19 +71,9 @@ public class AugmentActivity extends AppCompatActivity {
     }
     public void listeners()
     {
-        importButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
+        importButton.setOnClickListener(v -> openGallery());
 
-        uploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validatePostInfo();
-            }
-        });
+        uploadButton.setOnClickListener(v -> validatePostInfo());
     }
 
     public void openGallery()
@@ -129,31 +119,25 @@ public class AugmentActivity extends AppCompatActivity {
 
 
 
-        filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful())
-                {
+        filePath.putFile(ImageUri).addOnCompleteListener(task -> {
+            if(task.isSuccessful())
+            {
 
-                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            downloadUrl=uri.toString();
-                            savingPostInfoToDatabase();
-                        }
-                    });
+                filePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                    downloadUrl = uri.toString();
+                    savingPostInfoToDatabase();
+                });
 
 
 
 
-                    Toast.makeText(getApplicationContext(),"Image Uploaded Successfully!",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    uploadProgressBar.setVisibility(View.GONE);
-                    String message=task.getException().getMessage();
-                    Toast.makeText(getApplicationContext(),"Error Occured! "+message,Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(getApplicationContext(),"Image Uploaded Successfully!",Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                uploadProgressBar.setVisibility(View.GONE);
+                String message=task.getException().getMessage();
+                Toast.makeText(getApplicationContext(),"Error Occured! "+message,Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -177,20 +161,17 @@ public class AugmentActivity extends AppCompatActivity {
                     postsMap.put("ProfileImage",userProfileImage);
                     postsMap.put("Username",username);
 
-                    postRef.child(postRandomName).updateChildren(postsMap).addOnCompleteListener(new OnCompleteListener() {
-                        @Override
-                        public void onComplete(@NonNull Task task) {
-                            if(task.isSuccessful())
-                            {
-                                uploadProgressBar.setVisibility(View.GONE);
-                                finish();
-                                Toast.makeText(getApplicationContext(),"Post is updated successfully",Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                uploadProgressBar.setVisibility(View.GONE);
-                                Toast.makeText(getApplicationContext(),"Error occured while updating",Toast.LENGTH_SHORT).show();
-                            }
+                    postRef.child(postRandomName).updateChildren(postsMap).addOnCompleteListener(task -> {
+                        if(task.isSuccessful())
+                        {
+                            uploadProgressBar.setVisibility(View.GONE);
+                            finish();
+                            Toast.makeText(getApplicationContext(),"Post is updated successfully",Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            uploadProgressBar.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(),"Error occured while updating",Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
