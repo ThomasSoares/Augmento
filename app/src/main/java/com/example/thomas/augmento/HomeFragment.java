@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.thomas.augmento.PostAdapter.MyViewHolder;
@@ -33,6 +34,7 @@ public class HomeFragment extends Fragment {
     private List<Post> postList=new ArrayList<>();
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
+    ProgressBar homeProgressBar;
     private DatabaseReference postsRef;
     FirebaseRecyclerAdapter <Posts, MyViewHolder> firebaseRecyclerAdapter;
     int count;
@@ -41,6 +43,8 @@ public class HomeFragment extends Fragment {
     {
         recyclerView=parentHolder.findViewById(R.id.postRecyclerView);
         postAdapter=new PostAdapter(postList);
+        homeProgressBar=parentHolder.findViewById(R.id.homeProgressBar);
+        homeProgressBar.setVisibility(View.VISIBLE);
         RecyclerView.LayoutManager mLayoutManager=new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -55,9 +59,7 @@ public class HomeFragment extends Fragment {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void OnClick(View view, int position) {
-                Post post=postList.get(position);
 
-                Toast.makeText(getContext(), post.getUsername()+" is selected!",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -87,6 +89,7 @@ public class HomeFragment extends Fragment {
 
     public void displayAllUserPosts()
     {
+
         FirebaseRecyclerOptions<Posts> posts=
                 new FirebaseRecyclerOptions.Builder<Posts>()
                 .setQuery(postsRef, new SnapshotParser<Posts>() {
@@ -113,7 +116,7 @@ public class HomeFragment extends Fragment {
                         myViewHolder.setProfileImage(getContext(), posts.getProfileImage());
                         myViewHolder.setPostImage(getContext(), posts.getPostImage());
 
-
+                        homeProgressBar.setVisibility(View.GONE);
 
                     }
 

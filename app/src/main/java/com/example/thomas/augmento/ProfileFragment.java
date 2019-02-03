@@ -15,16 +15,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -39,7 +44,7 @@ public class ProfileFragment extends Fragment {
 
     View parentHolder;
     CircleImageView editImageView, profileImageView;
-    TextView nameTextView;
+    TextView nameTextView, descriptionTextView;
 
     ProgressBar profilePicProgressBar;
 
@@ -49,11 +54,15 @@ public class ProfileFragment extends Fragment {
     String currentUserID;
     String downloadUrl=null;
 
+    FlexboxLayoutManager layoutManager=new FlexboxLayoutManager(getContext());
+
+
     public void initialize()
     {
         editImageView=parentHolder.findViewById(R.id.editImageView);
         profileImageView=parentHolder.findViewById(R.id.profileImageView1);
         nameTextView=parentHolder.findViewById(R.id.nameTextView);
+        descriptionTextView=parentHolder.findViewById(R.id.descriptionTextView);
 
         profilePicProgressBar=parentHolder.findViewById(R.id.profilePicProgressBar);
 
@@ -62,42 +71,37 @@ public class ProfileFragment extends Fragment {
         UserRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
         UserProfileImageRef=FirebaseStorage.getInstance().getReference().child("Profile Images");
 
-        setProfilePhoto();
+
     }
 
     public void listeners()
     {
-        editImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        editImageView.setOnClickListener(v -> getPhoto());
 
-                getPhoto();
+        UserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    String profileImage=dataSnapshot.child("ProfileImage").getValue().toString();
+                    String username=dataSnapshot.child("Username").getValue().toString();
+                    String fullName=dataSnapshot.child("FirstName").getValue().toString() +" "+ dataSnapshot.child("LastName").getValue().toString();
+                    String description=dataSnapshot.child("Description").getValue().toString();
+
+                    Picasso.with(getContext()).load(profileImage).placeholder(R.drawable.ic_person_black_24dp).into(profileImageView);
+                    nameTextView.setText(fullName);
+                    descriptionTextView.setText(description);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
-
-    public void setProfilePhoto()
-    {
-        profilePicProgressBar.setVisibility(View.VISIBLE);
-
-        StorageReference pathReference=UserProfileImageRef.child(currentUserID+".jpg");
-        final long ONE_MEGABYTE=1024*1024;
-
-        pathReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap= BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, profileImageView.getWidth(), profileImageView.getHeight(), false));
-                profilePicProgressBar.setVisibility(View.GONE);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                profilePicProgressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Failed to load profile image",Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+    
 
     public void getPhoto()
     {
@@ -145,40 +149,28 @@ public class ProfileFragment extends Fragment {
 
                 final StorageReference filePath=UserProfileImageRef.child(currentUserID + ".jpg");
 
-                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if(task.isSuccessful())
-                        {
-                            Toast.makeText(getContext(),"Profile Image stored in storage",Toast.LENGTH_SHORT).show();
+                filePath.putFile(resultUri).addOnCompleteListener(task -> {
+                    if(task.isSuccessful())
+                    {
+                        Toast.makeText(getContext(),"Profile Image stored in storage",Toast.LENGTH_SHORT).show();
 
 
-                            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    downloadUrl=uri.toString();
+                        filePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                            downloadUrl = uri.toString();
 
-                                    UserRef.child("ProfileImage").setValue(downloadUrl)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful())
-                                                    {
-                                                        profilePicProgressBar.setVisibility(View.GONE);
-                                                        Toast.makeText(getContext(),"Image stored in database", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    else
-                                                    {
-                                                        profilePicProgressBar.setVisibility(View.GONE);
-                                                        String message=task.getException().getMessage();
-                                                        Toast.makeText(getContext(),"Error Occured: "+message, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-                                }
-                            });
+                            UserRef.child("ProfileImage").setValue(downloadUrl)
+                                    .addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            profilePicProgressBar.setVisibility(View.GONE);
+                                            Toast.makeText(getContext(), "Image stored in database", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            profilePicProgressBar.setVisibility(View.GONE);
+                                            String message = task1.getException().getMessage();
+                                            Toast.makeText(getContext(), "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        });
 
-                        }
                     }
                 });
 
@@ -213,11 +205,7 @@ public class ProfileFragment extends Fragment {
         parentHolder= inflater.inflate(R.layout.fragment_profile, container, false);
         initialize();
         listeners();
-        /*
-        if(checkSelfPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED)
-        {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
-        }*/
+
         return parentHolder;
     }
 

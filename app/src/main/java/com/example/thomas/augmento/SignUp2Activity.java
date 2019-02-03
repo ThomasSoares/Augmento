@@ -28,7 +28,7 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
 
     ConstraintLayout background;
     TextView signUpTextView, numeratorTextView, denominatorTextView;
-    EditText usernameEditText, passwordEditText;
+    EditText usernameEditText, passwordEditText, descriptionEditText;
     ImageView cancelButton;
     ImageView finishButton,backButon;
 
@@ -46,6 +46,7 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         denominatorTextView=findViewById(R.id.denominatorTextView);
         usernameEditText=findViewById(R.id.usernameEditText);
         passwordEditText=findViewById(R.id.passwordEditText);
+        descriptionEditText=findViewById(R.id.descriptionEditText);
         finishButton=findViewById(R.id.finishButton);
         backButon=findViewById(R.id.backButton);
         cancelButton=findViewById(R.id.cancelButton);
@@ -120,11 +121,15 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
         String firstName=getIntent().getStringExtra("firstName");
         String lastName=getIntent().getStringExtra("lastName");
         String username=usernameEditText.getText().toString();
+        String description=descriptionEditText.getText().toString();
 
         HashMap userMap=new HashMap();
         userMap.put(getString(R.string.firstName),firstName);
         userMap.put(getString(R.string.lastName),lastName);
         userMap.put(getString(R.string.username),username);
+        userMap.put(getString(R.string.description),description);
+        userMap.put(getString(R.string.profileImage),"https://firebasestorage.googleapis.com/v0/b/augmento-84ddb.appspot.com/o/Profile%20Images%2Fdefault.jpg?alt=media&token=37174551-0a0f-4709-bfbd-ba11c99ad863");
+
 
         // Initialize Firebase Auth
 
@@ -158,7 +163,7 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            User user=new User(usernameEditText.getText().toString(), getIntent().getStringExtra("firstName"), getIntent().getStringExtra("lastName"), getIntent().getStringExtra("email"));
+                            User user=new User(usernameEditText.getText().toString(), getIntent().getStringExtra("firstName"), getIntent().getStringExtra("lastName"), getIntent().getStringExtra("email"), descriptionEditText.getText().toString());
 
                             //adding in the local storage
                             LocalStorage localStorage=new LocalStorage(getApplicationContext());
@@ -166,6 +171,7 @@ public class SignUp2Activity extends AppCompatActivity implements View.OnClickLi
                             localStorage.addStorage(getString(R.string.firstName),user.getFirstName());
                             localStorage.addStorage(getString(R.string.lastName),user.getLastName());
                             localStorage.addStorage(getString(R.string.email),user.getEmail());
+                            localStorage.addStorage(getString(R.string.description), user.getDescription());
 
                             saveUserInfo();
 

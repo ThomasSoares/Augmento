@@ -28,7 +28,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/profile_picture"
+            android:src="@drawable/ic_person_black_24dp"
             app:civ_border_color="@color/colorAccent"
             app:civ_border_width="1dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,7 +48,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Ben Shapiro"
             android:textColor="@color/colorText"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -61,7 +60,6 @@
             android:layout_width="243dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="I am the greatest debater in the world. No one beats me because I have facts. I am a myth."
             android:textAlignment="center"
             android:textColor="@color/colorTextFade"
             app:layout_constraintEnd_toEndOf="parent"
@@ -179,6 +177,19 @@
             app:layout_constraintEnd_toEndOf="@+id/profileImageView1"
             app:layout_constraintStart_toStartOf="@+id/profileImageView1"
             app:layout_constraintTop_toTopOf="@+id/profileImageView1" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/profileRecyclerView"
+            android:layout_width="395dp"
+            android:layout_height="412dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/endLineImageView" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

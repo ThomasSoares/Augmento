@@ -8,6 +8,33 @@
     android:background="@color/colorPrimary"
     tools:context=".SignUp2Activity">
 
+    <ImageView
+        android:id="@+id/descriptionLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionEditText"
+        app:srcCompat="@drawable/ic_email_edit_text" />
+
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="300dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@android:color/transparent"
+        android:ems="10"
+        android:hint="Description"
+        android:inputType="textMultiLine"
+        android:textColor="@color/colorText"
+        android:textColorHint="@color/colorTextFade"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
+
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="300dp"

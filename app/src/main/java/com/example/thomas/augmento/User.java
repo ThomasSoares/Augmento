@@ -9,18 +9,20 @@ public class User
     private String firstName;
     private String lastName;
     private String email;
+    private String description;
 
     public User()
     {
         //empty constructor to help creating objects
     }
 
-    public User(String username, String firstName, String lastName, String email)
+    public User(String username, String firstName, String lastName, String email, String description)
     {
         this.username=username;
         this.firstName=firstName;
         this.lastName=lastName;
         this.email=email;
+        this.description=description;
     }
 
     //setters
@@ -40,6 +42,9 @@ public class User
     {
         this.email=email;
     }
+    public void setDescription(String description){
+        this.description=description;
+    }
 
     //getters
     public String getUsername()
@@ -58,4 +63,7 @@ public class User
     {
         return email;
     }
+    public String getDescription(){
+        return description;
+}
 }
