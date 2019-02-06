@@ -15,7 +15,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.SnapshotParser;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +41,8 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
@@ -49,12 +57,14 @@ public class ProfileFragment extends Fragment {
     ProgressBar profilePicProgressBar;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference UserRef;
+    private DatabaseReference UserRef, postsRef;
     private StorageReference UserProfileImageRef;
     String currentUserID;
     String downloadUrl=null;
+    RecyclerView recyclerView;
 
     FlexboxLayoutManager layoutManager=new FlexboxLayoutManager(getContext());
+    FirebaseRecyclerAdapter<ProfilePosts, ProfilePostAdapter.ProfilePostsViewHolder> firebaseRecyclerAdapter;
 
 
     public void initialize()
@@ -70,7 +80,17 @@ public class ProfileFragment extends Fragment {
         currentUserID=mAuth.getCurrentUser().getUid();
         UserRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
         UserProfileImageRef=FirebaseStorage.getInstance().getReference().child("Profile Images");
+        postsRef= FirebaseDatabase.getInstance().getReference().child("Posts");
+        recyclerView=parentHolder.findViewById(R.id.profileRecyclerView);
+        layoutManager=new FlexboxLayoutManager(getContext());
+        //layoutManager.canScrollHorizontally();
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setFlexWrap(FlexWrap.WRAP);
+        layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+        recyclerView.setLayoutManager(layoutManager);
 
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     }
 
@@ -193,9 +213,50 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    public void displayPosts()
+    {
+        FirebaseRecyclerOptions<ProfilePosts> profilePosts=
+                new FirebaseRecyclerOptions.Builder<ProfilePosts>()
+                .setQuery(postsRef, snapshot -> new ProfilePosts(snapshot.child("PostImage").getValue().toString()))
+                .build();
+
+        firebaseRecyclerAdapter=
+                new FirebaseRecyclerAdapter<ProfilePosts, ProfilePostAdapter.ProfilePostsViewHolder>(profilePosts) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull ProfilePostAdapter.ProfilePostsViewHolder profilePostsViewHolder, int i, @NonNull ProfilePosts profilePosts) {
+                        profilePostsViewHolder.setPostImageView(getContext(),profilePosts.getPostImage());
+
+                    }
+
+                    @NonNull
+                    @Override
+                    public ProfilePostAdapter.ProfilePostsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_posts, parent, false);
+
+                        return new ProfilePostAdapter.ProfilePostsViewHolder(view);
+                    }
+                };
+
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        firebaseRecyclerAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        firebaseRecyclerAdapter.stopListening();
     }
 
     @Override
@@ -205,6 +266,8 @@ public class ProfileFragment extends Fragment {
         parentHolder= inflater.inflate(R.layout.fragment_profile, container, false);
         initialize();
         listeners();
+
+        displayPosts();
 
         return parentHolder;
     }

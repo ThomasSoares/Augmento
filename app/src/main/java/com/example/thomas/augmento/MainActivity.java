@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                         loadFragment(fragment);
                         return true;
                     case R.id.navigation_augment:
-                        Intent intent=new Intent(getApplicationContext(),AugmentActivity.class);
+                        Intent intent=new Intent(getApplicationContext(),VideoRecordingActivity.class);
                         startActivity(intent);
                         return true;
                     case R.id.navigation_profile:
@@ -71,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+    private void startDemo()
+    {
+        Intent intent=new Intent(getApplicationContext(), AugmentActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         messageImageView=findViewById(R.id.messageImageView);
 
         settingsImageView.setOnClickListener(v -> logout());
-        messageImageView.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "Message Clicked!", Toast.LENGTH_SHORT).show());
+        messageImageView.setOnClickListener(v -> startDemo());
 
         loadFragment(new HomeFragment());
     }
