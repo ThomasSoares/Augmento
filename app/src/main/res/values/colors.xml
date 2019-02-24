@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#232930</color>
     <color name="colorAccent">#B546C8</color>
-    <color name="colorText">#ffffff</color>
-    <color name="colorTextFade">#94ffffff</color>
+    <color name="colorText">#FFFFFF</color>
+    <color name="colorTextFade">#94FFFFFF</color>
 </resources>

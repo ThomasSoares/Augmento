@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                         loadFragment(fragment);
                         return true;
                     case R.id.navigation_augment:
-                        Intent intent=new Intent(getApplicationContext(),VideoRecordingActivity.class);
+                        Intent intent=new Intent(getApplicationContext(),CameraActivity.class);
                         startActivity(intent);
                         return true;
                     case R.id.navigation_profile:

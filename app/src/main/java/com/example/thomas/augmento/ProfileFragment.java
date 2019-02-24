@@ -85,11 +85,9 @@ public class ProfileFragment extends Fragment {
         layoutManager=new FlexboxLayoutManager(getContext());
         //layoutManager.canScrollHorizontally();
         layoutManager.setFlexDirection(FlexDirection.ROW);
-        layoutManager.setFlexWrap(FlexWrap.WRAP);
-        layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+        layoutManager.setJustifyContent(JustifyContent.SPACE_EVENLY);
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     }
