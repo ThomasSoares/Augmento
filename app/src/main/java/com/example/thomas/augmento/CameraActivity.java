@@ -7,11 +7,15 @@ import androidx.fragment.app.FragmentTransaction;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -23,7 +27,12 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
+
 public class CameraActivity extends AppCompatActivity implements ModelLoader.ModelLoaderCallbacks{
+
 
     private static final String TAG=CameraActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION=3.0;
@@ -35,6 +44,8 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
     private ImageButton augmentButton, cameraButton, videoButton;
     public ImageView stickerImageView;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +54,8 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
             return;
         }
         LocalStorage storeSticker=new LocalStorage(getApplicationContext());
+        storeSticker.clear();
+        storeSticker.addStorage("StickerCount","0");
         storeSticker.addStorage("StickerID",String.valueOf(R.drawable.house));
         setContentView(R.layout.activity_camera);
 
@@ -53,6 +66,7 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
         cameraButton=findViewById(R.id.cameraButton);
         videoButton=findViewById(R.id.videoButton);
         stickerImageView=findViewById(R.id.stickerImageView);
+        augmentButton=findViewById(R.id.augmentButton);
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
@@ -79,12 +93,26 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
             Fragment fragment=new StickersFragment();
             loadFragment(fragment);
         });
+
+        cameraButton.setOnClickListener(v->{
+
+        });
+
+
+        augmentButton.setOnClickListener(v->{
+            Intent intent=new Intent(getApplicationContext(),ShareActivity.class);
+            startActivity(intent);
+        });
     }
+
+
+
 
     @Override
     public void setRenderable(ModelRenderable modelRenderable) {
         andyRenderable=modelRenderable;
     }
+
 
     @Override
     public void onLoadException(Throwable throwable) {

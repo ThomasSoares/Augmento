@@ -49,32 +49,69 @@ public class StickersFragment extends Fragment {
             @Override
             public void OnClick(View view, int position) {
                 Sticker sticker=stickerList.get(position);
-
+                int count;
 
                 LocalStorage storeSticker=new LocalStorage(getContext());
+                LocalStorage shareSticker=new LocalStorage(getContext());
+
+                if(shareSticker.getStorage("StickerCount").equalsIgnoreCase("0"))
+                {
+                    count=0;
+                }
+                else
+                {
+                    count= Integer.parseInt(shareSticker.getStorage("StickerCount"));
+                }
                 if(sticker.getGifUrl()==R.drawable.flyingsaucer)
                 {
                     storeSticker.addStorage("StickerID",String.valueOf(R.raw.flyingsacuer));
                     modelLoader.loadModel(getContext(),R.raw.flyingsacuer);
                     Toast.makeText(getContext(),sticker.getGifUrl()+" is selected!",Toast.LENGTH_SHORT).show();
+
+                    ++count;
+                    shareSticker.addStorage("StickerCount",String.valueOf(count));
+                    shareSticker.addStorage("Sticker"+count, String.valueOf(R.drawable.flyingsaucer));
                 }
                 else if(sticker.getGifUrl()==R.drawable.house)
                 {
                     storeSticker.addStorage("StickerID",String.valueOf(R.raw.house));
                     modelLoader.loadModel(getContext(),R.raw.house);
                     Toast.makeText(getContext(),sticker.getGifUrl()+" is selected!",Toast.LENGTH_SHORT).show();
+
+                    ++count;
+                    shareSticker.addStorage("StickerCount",String.valueOf(count));
+                    shareSticker.addStorage("Sticker"+count, String.valueOf(R.drawable.house));
                 }
                 else if(sticker.getGifUrl()==R.drawable.spaceman)
                 {
                     storeSticker.addStorage("StickerID",String.valueOf(R.raw.spaceman));
                     modelLoader.loadModel(getContext(),R.raw.spaceman);
                     Toast.makeText(getContext(),sticker.getGifUrl()+" is selected!",Toast.LENGTH_SHORT).show();
+
+                    ++count;
+                    shareSticker.addStorage("StickerCount",String.valueOf(count));
+                    shareSticker.addStorage("Sticker"+count, String.valueOf(R.drawable.spaceman));
                 }
                 else if(sticker.getGifUrl()==R.drawable.uphouse)
                 {
                     storeSticker.addStorage("StickerID",String.valueOf(R.raw.uphouse));
                     modelLoader.loadModel(getContext(),R.raw.uphouse);
                     Toast.makeText(getContext(),sticker.getGifUrl()+" is selected!",Toast.LENGTH_SHORT).show();
+
+                    ++count;
+                    shareSticker.addStorage("StickerCount",String.valueOf(count));
+                    shareSticker.addStorage("Sticker"+count, String.valueOf(R.drawable.uphouse));
+
+                }
+                else if(sticker.getGifUrl()==R.drawable.andy)
+                {
+                    storeSticker.addStorage("StickerID",String.valueOf(R.raw.andy));
+                    modelLoader.loadModel(getContext(),R.raw.andy);
+                    Toast.makeText(getContext(),sticker.getGifUrl()+" is selected!",Toast.LENGTH_SHORT).show();
+
+                    ++count;
+                    shareSticker.addStorage("StickerCount",String.valueOf(count));
+                    shareSticker.addStorage("Sticker"+count, String.valueOf(R.drawable.andy));
                 }
 
 
@@ -89,6 +126,7 @@ public class StickersFragment extends Fragment {
         }));
 
         backArrowImageView.setOnClickListener(v -> {
+
             getActivity().onBackPressed();
 
         });
@@ -106,6 +144,9 @@ public class StickersFragment extends Fragment {
         stickerList.add(sticker);
 
         sticker=new Sticker(R.drawable.uphouse);
+        stickerList.add(sticker);
+
+        sticker=new Sticker(R.drawable.andy);
         stickerList.add(sticker);
     }
 
