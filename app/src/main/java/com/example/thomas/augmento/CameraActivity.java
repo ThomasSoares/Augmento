@@ -43,7 +43,7 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
 
     private ImageButton augmentButton, cameraButton, videoButton;
     public ImageView stickerImageView;
-
+    int count;
 
 
     @Override
@@ -58,6 +58,16 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
         storeSticker.addStorage("StickerCount","0");
         storeSticker.addStorage("StickerID",String.valueOf(R.drawable.house));
         setContentView(R.layout.activity_camera);
+
+        LocalStorage shareSticker=new LocalStorage(getApplicationContext());
+        if(shareSticker.getStorage("StickerCount").equalsIgnoreCase("0"))
+        {
+            count=0;
+        }
+        else
+        {
+            count= Integer.parseInt(shareSticker.getStorage("StickerCount"));
+        }
 
         arFragment=(WritingArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         modelLoader=new ModelLoader(this);
@@ -84,6 +94,10 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
                     andy.setParent(anchorNode);
                     andy.setRenderable(andyRenderable);
                     andy.select();
+
+                    ++count;
+                    shareSticker.addStorage("StickerCount",String.valueOf(count));
+                    shareSticker.addStorage("Sticker"+count, storeSticker.getStorage("StickerGifID"));
 
                     String position= String.valueOf(anchor.getPose());
                     Log.i("Position",position);
