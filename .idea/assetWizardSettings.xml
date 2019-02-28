@@ -136,7 +136,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/snap/android-studio/71/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_add_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/snap/android-studio/71/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_comment_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -146,9 +146,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="b546c8" />
-                            <entry key="outputName" value="ic_create" />
-                            <entry key="sourceFile" value="$USER_HOME$" />
+                            <entry key="outputName" value="ic_purple_heart" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/favorite-heart-button.svg" />
                           </map>
                         </option>
                       </PersistentState>
