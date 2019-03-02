@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -21,7 +23,14 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.ar.core.Anchor;
+import com.google.ar.core.HitResult;
+import com.google.ar.core.Plane;
+import com.google.ar.core.Session;
+import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -39,12 +48,15 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
     private DatabaseReference postsRef;
     private FirebaseRecyclerAdapter<StickerViewLayout, StickerViewLayoutAdapter.MyViewHolder> firebaseRecyclerAdapter;
 
+
     private static final String TAG=SearchFragment.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION=3.0;
 
     private WritingArFragment arFragment;
     private ModelRenderable andyRenderable;
     private ModelLoader modelLoader;
+
+    private final Session session=null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,11 +79,43 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(stickerViewLayoutAdapter);
         postsRef= FirebaseDatabase.getInstance().getReference().child("StickerPosts");
+
+        modelLoader = new ModelLoader(this);
+        modelLoader.loadModel(getContext(),R.raw.andy);
+
+
+        arFragment.setOnTapArPlaneListener(
+                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+                    if (andyRenderable == null) {
+                        return;
+                    }
+
+                    // Create the Anchor.
+                    //long var1 = Long.parseLong("t:[x:-0.883, y:-1.003, z:-1.719], q:[x:0.00, y:0.33, z:0.00, w:0.94]");
+
+                    Anchor anchor = hitResult.createAnchor();
+
+                    Log.i("ANCHOR",String.valueOf(anchor));
+                    AnchorNode anchorNode = new AnchorNode(anchor);
+                    Toast.makeText(getContext(), String.valueOf(anchorNode),Toast.LENGTH_LONG).show();
+                    anchorNode.setParent(arFragment.getArSceneView().getScene());
+
+                    // Create the transformable andy and add it to the anchor.
+                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
+                    andy.setParent(anchorNode);
+                    andy.setRenderable(andyRenderable);
+                    andy.select();
+
+                });
+
         //initialize
         displayAllUsers();
 
         return parentHolder;
     }
+
+
+
 
     public void displayAllUsers()
     {
@@ -129,12 +173,15 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
 
     @Override
     public void setRenderable(ModelRenderable modelRenderable) {
-
+        andyRenderable = modelRenderable;
     }
 
     @Override
     public void onLoadException(Throwable throwable) {
-
+        Toast toast = Toast.makeText(getContext(), "Unable to load andy renderable", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+        Log.e(TAG, "Unable to load andy renderable", throwable);
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {

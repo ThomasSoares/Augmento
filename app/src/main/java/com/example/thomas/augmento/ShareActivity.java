@@ -25,6 +25,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -113,13 +117,12 @@ public class ShareActivity extends AppCompatActivity {
         }
         else
         {
-            savingPostInfoToDatabase();
+            storingFileToFirebaseStorage();
         }
     }
 
-    public void savingPostInfoToDatabase()
+    public void storingFileToFirebaseStorage()
     {
-        LocalStorage localStorage=new LocalStorage(getApplicationContext());
         Calendar callForDate=Calendar.getInstance();
         SimpleDateFormat currentDate=new SimpleDateFormat("dd-MMMM-yyyy");
         saveCurrentDate=currentDate.format(callForDate.getTime());
@@ -129,6 +132,15 @@ public class ShareActivity extends AppCompatActivity {
         saveCurrentTime=currentTime.format(callForTime.getTime());
 
         postRandomName=currentUserID+saveCurrentDate+saveCurrentTime;
+
+        final StorageReference filePath=postImagesReference.child("Post Images").child(postRandomName+".txt");
+
+    }
+
+    public void savingPostInfoToDatabase()
+    {
+        LocalStorage localStorage=new LocalStorage(getApplicationContext());
+
 
         userRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -144,11 +156,11 @@ public class ShareActivity extends AppCompatActivity {
                     postsMap.put("Time",saveCurrentTime);
                     postsMap.put("Description",description);
 
-                    String downloadUrl;
 
                     for (int i=1;i<=Integer.parseInt(localStorage.getStorage("StickerCount"));i++)
                     {
                         postsMap.put("PostSticker"+i,localStorage.getStorage("Sticker"+i));
+                        postsMap.put("StickerPosition"+i,localStorage.getStorage("Position"+i));
                     }
                     postsMap.put("ProfileImage",userProfileImage);
                     postsMap.put("Username",username);
@@ -187,6 +199,15 @@ public class ShareActivity extends AppCompatActivity {
             sticker=new Sticker(Integer.parseInt(stickerStorage.getStorage("Sticker"+i)));
             stickerList.add(sticker);
         }
+    }
+
+    public static Anchor serializeDataIn() throws IOException, ClassNotFoundException {
+        String fileName= "Test.txt";
+        FileInputStream fin = new FileInputStream(fileName);
+        ObjectInputStream ois = new ObjectInputStream(fin);
+        Anchor iHandler= (Anchor) ois.readObject();
+        ois.close();
+        return iHandler;
     }
 
     @Override

@@ -23,12 +23,18 @@ import android.widget.Toast;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 
 public class CameraActivity extends AppCompatActivity implements ModelLoader.ModelLoaderCallbacks{
@@ -87,6 +93,7 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
                     // Create the Anchor.
                     Anchor anchor = hitResult.createAnchor();
                     AnchorNode anchorNode = new AnchorNode(anchor);
+
                     anchorNode.setParent(arFragment.getArSceneView().getScene());
 
                     // Create the transformable andy and add it to the anchor.
@@ -100,7 +107,15 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
                     shareSticker.addStorage("Sticker"+count, storeSticker.getStorage("StickerGifID"));
 
                     String position= String.valueOf(anchor.getPose());
-                    Log.i("Position",position);
+
+                    try {
+                        serializeDataOut(hitResult.createAnchor());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    shareSticker.addStorage("Position"+count, anchor.toString());
                 });
 
         stickerImageView.setOnClickListener(v->{
@@ -119,6 +134,32 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
         });
     }
 
+
+    public void serializeDataOut(Anchor anchor)throws IOException {
+
+        Object o=null;
+        String fileName= "Test.txt";
+        FileOutputStream fos = new FileOutputStream(fileName);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(anchor);
+        Toast.makeText(getApplicationContext(),"Saved to "+getFilesDir()+"/example.txt",Toast.LENGTH_LONG).show();
+        oos.close();
+    }
+    /*
+    public void serializeDataOut(Anchor anchor){
+
+        String fileName="example.txt";
+
+        try {
+            FileOutputStream fos=openFileOutput(fileName, MODE_PRIVATE);
+            fos.write("sdfasdfasdfasdf".getBytes());
+            Toast.makeText(getApplicationContext(),"Saved to "+getFilesDir()+"/example.txt",Toast.LENGTH_LONG).show();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
 
 
 

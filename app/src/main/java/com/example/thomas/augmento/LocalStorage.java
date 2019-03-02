@@ -3,6 +3,9 @@ package com.example.thomas.augmento;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.ar.core.Anchor;
+import com.google.ar.core.HitResult;
+
 public class LocalStorage
 {
     Context context;
@@ -27,4 +30,7 @@ public class LocalStorage
         sharedPreferences.edit().clear();
         sharedPreferences.edit().commit();
     }
+
+
+
 }

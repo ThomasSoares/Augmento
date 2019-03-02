@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ShareActivity"></activity>
+        <activity android:name=".SearchNewActivity"></activity>
+        <activity android:name=".ShareActivity" />
         <activity android:name=".CameraActivity" />
         <!--
          This tag indicates that this application requires ARCore. This results in the

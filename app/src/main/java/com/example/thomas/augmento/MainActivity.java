@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void startDemo()
     {
-        Intent intent=new Intent(getApplicationContext(), AugmentActivity.class);
+        Intent intent=new Intent(getApplicationContext(), SearchNewActivity.class);
         startActivity(intent);
     }
 
