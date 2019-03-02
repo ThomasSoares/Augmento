@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="600dp"
     android:background="@color/colorPrimary">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -22,8 +22,7 @@
         android:id="@+id/lineImageView"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/postImageView"
+        app:layout_constraintBottom_toBottomOf="@+id/likesNumberTextView"
         app:layout_constraintEnd_toEndOf="@+id/profileImageView1"
         app:layout_constraintStart_toStartOf="@+id/profileImageView1"
         app:layout_constraintTop_toBottomOf="@+id/profileImageView1"
@@ -68,5 +67,63 @@
         app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
         app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"
         app:srcCompat="@color/colorAccent" />
+
+    <ImageButton
+        android:id="@+id/likeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline25"
+        app:layout_constraintTop_toBottomOf="@+id/postImageView"
+        app:srcCompat="@drawable/ic_heart_normal" />
+
+    <TextView
+        android:id="@+id/likesNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="30"
+        android:textColor="@color/colorTextFade"
+        app:layout_constraintEnd_toEndOf="@+id/likeButton"
+        app:layout_constraintStart_toStartOf="@+id/likeButton"
+        app:layout_constraintTop_toBottomOf="@+id/likeButton" />
+
+    <ImageButton
+        android:id="@+id/commentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="@+id/guideline25"
+        app:layout_constraintTop_toBottomOf="@+id/postImageView"
+        app:srcCompat="@drawable/ic_comment_post" />
+
+    <TextView
+        android:id="@+id/commentsNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2"
+        android:textColor="@color/colorTextFade"
+        app:layout_constraintEnd_toEndOf="@+id/commentButton"
+        app:layout_constraintStart_toStartOf="@+id/commentButton"
+        app:layout_constraintTop_toBottomOf="@+id/commentButton" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintGuide_percent="0.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintGuide_percent="0.5"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

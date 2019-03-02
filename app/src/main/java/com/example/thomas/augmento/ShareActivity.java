@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -90,9 +91,21 @@ public class ShareActivity extends AppCompatActivity {
         });
 
         shareButton.setOnClickListener(v->{
-
+            hideKeyboard();
             validatePostInfo();
         });
+
+    }
+
+    public void hideKeyboard()
+    {
+        //FUNCTION THAT HIDES THE KEYBOARD
+
+        InputMethodManager inputMethodManager= (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if(inputMethodManager.isAcceptingText())
+        {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
 
     }
 
@@ -117,12 +130,22 @@ public class ShareActivity extends AppCompatActivity {
         }
         else
         {
-            storingFileToFirebaseStorage();
+            //storingFileToFirebaseStorage();
+            savingPostInfoToDatabase();
         }
     }
 
     public void storingFileToFirebaseStorage()
     {
+
+
+        final StorageReference filePath=postImagesReference.child("Post Images").child(postRandomName+".txt");
+
+    }
+
+    public void savingPostInfoToDatabase()
+    {
+        LocalStorage localStorage=new LocalStorage(getApplicationContext());
         Calendar callForDate=Calendar.getInstance();
         SimpleDateFormat currentDate=new SimpleDateFormat("dd-MMMM-yyyy");
         saveCurrentDate=currentDate.format(callForDate.getTime());
@@ -132,15 +155,6 @@ public class ShareActivity extends AppCompatActivity {
         saveCurrentTime=currentTime.format(callForTime.getTime());
 
         postRandomName=currentUserID+saveCurrentDate+saveCurrentTime;
-
-        final StorageReference filePath=postImagesReference.child("Post Images").child(postRandomName+".txt");
-
-    }
-
-    public void savingPostInfoToDatabase()
-    {
-        LocalStorage localStorage=new LocalStorage(getApplicationContext());
-
 
         userRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -201,14 +215,6 @@ public class ShareActivity extends AppCompatActivity {
         }
     }
 
-    public static Anchor serializeDataIn() throws IOException, ClassNotFoundException {
-        String fileName= "Test.txt";
-        FileInputStream fin = new FileInputStream(fileName);
-        ObjectInputStream ois = new ObjectInputStream(fin);
-        Anchor iHandler= (Anchor) ois.readObject();
-        ois.close();
-        return iHandler;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

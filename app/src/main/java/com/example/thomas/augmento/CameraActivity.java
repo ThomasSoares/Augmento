@@ -105,16 +105,6 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
                     ++count;
                     shareSticker.addStorage("StickerCount",String.valueOf(count));
                     shareSticker.addStorage("Sticker"+count, storeSticker.getStorage("StickerGifID"));
-
-                    String position= String.valueOf(anchor.getPose());
-
-                    try {
-                        serializeDataOut(hitResult.createAnchor());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
                     shareSticker.addStorage("Position"+count, anchor.toString());
                 });
 

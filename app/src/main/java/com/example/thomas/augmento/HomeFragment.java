@@ -1,5 +1,6 @@
 package com.example.thomas.augmento;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -20,9 +21,12 @@ import com.example.thomas.augmento.PostAdapter.MyViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,18 +35,25 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     View parentHolder;
+
+    String currentUserID;
+    private FirebaseAuth mAuth;
     private List<Post> postList=new ArrayList<>();
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     ProgressBar homeProgressBar;
-    private DatabaseReference postsRef;
+    private DatabaseReference postsRef, likesRef;
     FirebaseRecyclerAdapter <Posts, MyViewHolder> firebaseRecyclerAdapter;
     int count;
+    boolean likeChecker;
 
     public void initialize()
     {
         recyclerView=parentHolder.findViewById(R.id.postRecyclerView);
         postAdapter=new PostAdapter(postList);
+
+        mAuth=FirebaseAuth.getInstance();
+        currentUserID=mAuth.getCurrentUser().getUid();
         homeProgressBar=parentHolder.findViewById(R.id.homeProgressBar);
         homeProgressBar.setVisibility(View.VISIBLE);
         RecyclerView.LayoutManager mLayoutManager=new LinearLayoutManager(getContext());
@@ -51,7 +62,9 @@ public class HomeFragment extends Fragment {
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(postAdapter);
         postsRef= FirebaseDatabase.getInstance().getReference().child("Posts");
+        likesRef=FirebaseDatabase.getInstance().getReference().child("Likes");
         count=0;
+        likeChecker=false;
     }
 
     public void listeners()
@@ -111,10 +124,49 @@ public class HomeFragment extends Fragment {
                 new FirebaseRecyclerAdapter<Posts, MyViewHolder>(posts) {
                     @Override
                     protected void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i, @NonNull Posts posts) {
+
+                        final String PostKey=getRef(i).getKey();
+
                         myViewHolder.setUsername(posts.getUsername());
                         myViewHolder.setDescription(posts.getDescription());
                         myViewHolder.setProfileImage(getContext(), posts.getProfileImage());
                         myViewHolder.setPostImage(getContext(), posts.getPostImage());
+
+                        myViewHolder.setLikeButtonStatus(PostKey);
+                        myViewHolder.setCommentButtonNumber(PostKey);
+                        myViewHolder.commentButton.setOnClickListener(v -> {
+                            Intent clickCommentIntent=new Intent(getContext(),CommentsActivity.class);
+                            clickCommentIntent.putExtra("PostKey",PostKey);
+                            startActivity(clickCommentIntent);
+                        });
+
+                        myViewHolder.likeButton.setOnClickListener(v->{
+                            likeChecker=true;
+
+                            likesRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(likeChecker==true)
+                                    {
+                                        if(dataSnapshot.child(PostKey).hasChild(currentUserID))
+                                        {
+                                            likesRef.child(PostKey).child(currentUserID).removeValue();
+                                            likeChecker=false;
+                                        }
+                                        else
+                                        {
+                                            likesRef.child(PostKey).child(currentUserID).setValue(true);
+                                            likeChecker=false;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        });
 
                         homeProgressBar.setVisibility(View.GONE);
 

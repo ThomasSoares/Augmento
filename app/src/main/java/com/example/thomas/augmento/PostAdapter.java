@@ -5,15 +5,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -25,11 +33,67 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
         View mView;
+        public ImageButton likeButton, commentButton;
+        public TextView likesNumberTextView, commentsNumberTextView;
+        int countLikes;
+        String currentUserId;
+        DatabaseReference likesRef, commentsRef;
 
         public MyViewHolder(View view)
         {
             super(view);
             mView=itemView;
+
+            likeButton=mView.findViewById(R.id.likeButton);
+            commentButton=mView.findViewById(R.id.commentButton);
+            likesNumberTextView=mView.findViewById(R.id.likesNumberTextView);
+            commentsNumberTextView=mView.findViewById(R.id.commentsNumberTextView);
+
+            likesRef= FirebaseDatabase.getInstance().getReference().child("Likes");
+            commentsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
+            currentUserId= FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
+
+        public void setLikeButtonStatus(final String PostKey)
+        {
+            likesRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.child(PostKey).hasChild(currentUserId))
+                    {
+                        countLikes=(int) dataSnapshot.child(PostKey).getChildrenCount();
+                        likeButton.setImageResource(R.drawable.ic_purple_heart);
+                        likesNumberTextView.setText(Integer.toString(countLikes));
+                    }
+                    else
+                    {
+                        countLikes=(int) dataSnapshot.child(PostKey).getChildrenCount();
+                        likeButton.setImageResource(R.drawable.ic_heart_normal);
+                        likesNumberTextView.setText(Integer.toString(countLikes));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        public void setCommentButtonNumber(final String PostKey)
+        {
+            commentsRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int commentCount=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    commentsNumberTextView.setText(Integer.toString(commentCount));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
 
         public void setUsername(String username)
