@@ -63,14 +63,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void logout()
-    {
-        FirebaseAuth.getInstance().signOut();
 
-        Intent intent=new Intent(getApplicationContext(), StartActivity.class);
-        startActivity(intent);
-        finish();
-    }
     private void startDemo()
     {
         Intent intent=new Intent(getApplicationContext(), SearchNewActivity.class);
@@ -91,7 +84,10 @@ public class MainActivity extends AppCompatActivity {
         settingsImageView=findViewById(R.id.settingsImageView);
         messageImageView=findViewById(R.id.messageImageView);
 
-        settingsImageView.setOnClickListener(v -> logout());
+        settingsImageView.setOnClickListener(v -> {
+            Intent intent=new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
+        });
         messageImageView.setOnClickListener(v -> startDemo());
 
         loadFragment(new HomeFragment());
