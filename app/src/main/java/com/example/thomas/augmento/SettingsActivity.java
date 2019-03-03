@@ -87,6 +87,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         resetButton.setOnClickListener(v->{
             Toast.makeText(getApplicationContext(),"Cannot reset at the moment!",Toast.LENGTH_SHORT).show();
+
+            Intent intent=new Intent(getApplicationContext(), AugmentActivity.class);
+            startActivity(intent);
         });
 
         saveButton.setOnClickListener(v->{

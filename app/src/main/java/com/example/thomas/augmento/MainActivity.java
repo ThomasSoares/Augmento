@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
 
 
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
                 LocalStorage localStorage=new LocalStorage(getApplicationContext());

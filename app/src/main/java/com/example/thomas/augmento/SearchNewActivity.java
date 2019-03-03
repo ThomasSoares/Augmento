@@ -2,11 +2,14 @@ package com.example.thomas.augmento;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +40,8 @@ public class SearchNewActivity extends AppCompatActivity {
     RecyclerView searchResultList;
     String searchBoxInput;
 
+    LocalStorage profileId;
+
     private DatabaseReference allUsersDatabaseRef;
     private FirebaseRecyclerAdapter<FindFriends, FindFriendsAdapter.FindFriendsViewHolder> firebaseRecyclerAdapter;
 
@@ -48,6 +53,7 @@ public class SearchNewActivity extends AppCompatActivity {
         searchButton=findViewById(R.id.searchButton);
         searchResultList=findViewById(R.id.recyclerView);
         allUsersDatabaseRef= FirebaseDatabase.getInstance().getReference().child("Users");
+        profileId=new LocalStorage(getApplicationContext());
     }
 
     public void listeners()
@@ -89,6 +95,14 @@ public class SearchNewActivity extends AppCompatActivity {
                         myViewHolder.setLastName(findFriends.getLastName());
                         myViewHolder.setUsername(findFriends.getUsername());
 
+                        myViewHolder.mView.setOnClickListener(v -> {
+                            String visit_user_id=getRef(i).getKey();
+                            profileId.addStorage("ProfileFlag","1");
+
+                            Intent intent=new Intent(getApplicationContext(), ViewProfileActivity.class);
+                            intent.putExtra("UserID",visit_user_id);
+                            startActivity(intent);
+                        });
                     }
 
                     @NonNull
@@ -101,6 +115,14 @@ public class SearchNewActivity extends AppCompatActivity {
                 };
         firebaseRecyclerAdapter.startListening();
         searchResultList.setAdapter(firebaseRecyclerAdapter);
+    }
+
+    private void loadFragment(Fragment fragment)
+    {
+        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.containerSearch, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override

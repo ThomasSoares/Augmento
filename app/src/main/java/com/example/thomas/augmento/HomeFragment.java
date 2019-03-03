@@ -46,6 +46,7 @@ public class HomeFragment extends Fragment {
     FirebaseRecyclerAdapter <Posts, MyViewHolder> firebaseRecyclerAdapter;
     int count;
     boolean likeChecker;
+    private long countPosts=0;
 
     public void initialize()
     {
@@ -105,19 +106,13 @@ public class HomeFragment extends Fragment {
 
         FirebaseRecyclerOptions<Posts> posts=
                 new FirebaseRecyclerOptions.Builder<Posts>()
-                .setQuery(postsRef, new SnapshotParser<Posts>() {
-                    @NonNull
-                    @Override
-                    public Posts parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new Posts(snapshot.child("Date").getValue().toString(),
-                                snapshot.child("Description").getValue().toString(),
-                                snapshot.child("PostImage").getValue().toString(),
-                                snapshot.child("ProfileImage").getValue().toString(),
-                                snapshot.child("Time").getValue().toString(),
-                                snapshot.child("UserId").getKey().toString(),
-                                snapshot.child("Username").getValue().toString());
-                    }
-                })
+                .setQuery(postsRef, snapshot -> new Posts(snapshot.child("Date").getValue().toString(),
+                        snapshot.child("Description").getValue().toString(),
+                        snapshot.child("PostImage").getValue().toString(),
+                        snapshot.child("ProfileImage").getValue().toString(),
+                        snapshot.child("Time").getValue().toString(),
+                        snapshot.child("UserId").getKey().toString(),
+                        snapshot.child("Username").getValue().toString()))
                 .build();
 
         firebaseRecyclerAdapter=

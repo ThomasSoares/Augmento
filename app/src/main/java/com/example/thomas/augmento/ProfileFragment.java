@@ -59,9 +59,12 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
     private DatabaseReference UserRef, postsRef;
     private StorageReference UserProfileImageRef;
-    String currentUserID;
+    String currentUserID, receiverUserID;
     String downloadUrl=null;
     RecyclerView recyclerView;
+
+
+    LocalStorage localStorage;
 
     FlexboxLayoutManager layoutManager=new FlexboxLayoutManager(getContext());
     FirebaseRecyclerAdapter<ProfilePosts, ProfilePostAdapter.ProfilePostsViewHolder> firebaseRecyclerAdapter;
@@ -74,18 +77,20 @@ public class ProfileFragment extends Fragment {
         nameTextView=parentHolder.findViewById(R.id.nameTextView);
         descriptionTextView=parentHolder.findViewById(R.id.descriptionTextView);
 
+        localStorage=new LocalStorage(getContext());
         profilePicProgressBar=parentHolder.findViewById(R.id.profilePicProgressBar);
 
         mAuth=FirebaseAuth.getInstance();
+        receiverUserID=localStorage.getStorage("ProfileID");
         currentUserID=mAuth.getCurrentUser().getUid();
         UserRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
         UserProfileImageRef=FirebaseStorage.getInstance().getReference().child("Profile Images");
         postsRef= FirebaseDatabase.getInstance().getReference().child("Posts");
+
         recyclerView=parentHolder.findViewById(R.id.profileRecyclerView);
         layoutManager=new FlexboxLayoutManager(getContext());
         //layoutManager.canScrollHorizontally();
         layoutManager.setFlexDirection(FlexDirection.ROW);
-        layoutManager.setJustifyContent(JustifyContent.SPACE_EVENLY);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
