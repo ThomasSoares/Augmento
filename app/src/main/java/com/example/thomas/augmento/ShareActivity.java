@@ -174,7 +174,9 @@ public class ShareActivity extends AppCompatActivity {
                     for (int i=1;i<=Integer.parseInt(localStorage.getStorage("StickerCount"));i++)
                     {
                         postsMap.put("PostSticker"+i,localStorage.getStorage("Sticker"+i));
-                        postsMap.put("StickerPosition"+i,localStorage.getStorage("Position"+i));
+                        postsMap.put("StickerPositionX"+i,localStorage.getStorage("PositionX"+i));
+                        postsMap.put("StickerPositionY"+i,localStorage.getStorage("PositionY"+i));
+                        postsMap.put("StickerPositionZ"+i,localStorage.getStorage("PositionZ"+i));
                     }
                     postsMap.put("ProfileImage",userProfileImage);
                     postsMap.put("Username",username);

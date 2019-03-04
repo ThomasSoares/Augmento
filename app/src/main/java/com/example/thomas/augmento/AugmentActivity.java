@@ -61,6 +61,7 @@ public class AugmentActivity extends AppCompatActivity {
         uploadButton = findViewById(R.id.uploadButton);
         uploadProgressBar=findViewById(R.id.uploadProgressBar);
 
+        //FIREBASE
         postImagesReference = FirebaseStorage.getInstance().getReference();
         userRef=FirebaseDatabase.getInstance().getReference().child("Users");
         postRef=FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -84,6 +85,19 @@ public class AugmentActivity extends AppCompatActivity {
         startActivityForResult(galleryIntent,Gallery_Pick);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==Gallery_Pick && resultCode==RESULT_OK && data!=null)
+        {
+            ImageUri=data.getData();
+            importImageView.setImageURI(ImageUri);
+        }
+    }
+
+
+    //FIREBASE
     public void validatePostInfo()
     {
         description=descriptionEditText.getText().toString();
@@ -184,16 +198,7 @@ public class AugmentActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==Gallery_Pick && resultCode==RESULT_OK && data!=null)
-        {
-            ImageUri=data.getData();
-            importImageView.setImageURI(ImageUri);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

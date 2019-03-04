@@ -188,20 +188,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/followButton" />
-
-        <Button
-            android:id="@+id/followButton"
-            android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:background="@color/colorAccent"
-            android:text="Follow"
-            android:textColor="@color/colorText"
-            android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/endLineImageView"
-            app:layout_constraintStart_toStartOf="@+id/endLineImageView"
-            app:layout_constraintTop_toTopOf="@+id/endLineImageView"
-            app:layout_constraintBottom_toBottomOf="@+id/endLineImageView"/>
+            app:layout_constraintTop_toBottomOf="@+id/endLineImageView" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
