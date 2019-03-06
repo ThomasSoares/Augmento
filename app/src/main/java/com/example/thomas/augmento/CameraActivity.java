@@ -192,21 +192,7 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
         Toast.makeText(getApplicationContext(),"Saved to "+getFilesDir()+"/example.txt",Toast.LENGTH_LONG).show();
         oos.close();
     }
-    /*
-    public void serializeDataOut(Anchor anchor){
 
-        String fileName="example.txt";
-
-        try {
-            FileOutputStream fos=openFileOutput(fileName, MODE_PRIVATE);
-            fos.write("sdfasdfasdfasdf".getBytes());
-            Toast.makeText(getApplicationContext(),"Saved to "+getFilesDir()+"/example.txt",Toast.LENGTH_LONG).show();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
 
 

@@ -19,7 +19,10 @@ public class FindFriendsAdapter extends RecyclerView.Adapter<FindFriendsAdapter.
 
     private List<FindFriends> findFriendsList;
 
-
+    public FindFriendsAdapter(List<FindFriends> findFriendsList)
+    {
+        this.findFriendsList=findFriendsList;
+    }
 
     public static class FindFriendsViewHolder extends RecyclerView.ViewHolder
     {
@@ -62,13 +65,16 @@ public class FindFriendsAdapter extends RecyclerView.Adapter<FindFriendsAdapter.
     @NonNull
     @Override
     public FindFriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView= LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list_row, parent,false);
+        View itemView= LayoutInflater.from(parent.getContext()).inflate(R.layout.all_user_display_layout, parent,false);
         return new FindFriendsViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FindFriendsViewHolder holder, int position) {
         FindFriends findFriends=findFriendsList.get(position);
+        holder.setFirstName(findFriends.getFirstName());
+        holder.setLastName(findFriends.getLastName());
+        holder.setUsername(findFriends.getUsername());
     }
 
     @Override

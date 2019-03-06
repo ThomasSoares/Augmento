@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private DatabaseReference usersRef;
 
     public void initialize()
-    {
+    {//INITIALIZE COMPONENTS
         background=findViewById(R.id.background);
         signInTextView=findViewById(R.id.signInTextView);
         emailEditText=findViewById(R.id.emailEditText);
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void listeners()
-    {
+    {//SET LISTENERS
         background.setOnClickListener(this);
         signInTextView.setOnClickListener(this);
         signInButton.setOnClickListener(this);
@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void loginClicked()
-    {
+    {//FUNCTION TO BE EXECUTED WHEN LOGIN HAS BEEN CLICKED
 
         hideKeyboard();
 
@@ -132,15 +132,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v)
     {
         if(v.getId()==R.id.signInButton)
-        {
+        {//WHEN SIGN IN BUTTON CLICKED
             loginClicked();
         }
         else if(v.getId()==R.id.background || v.getId()==R.id.signInTextView)
-        {
+        {//WHEN BACKGROUND OR SIGN IN TEXT IS CLICKED
             hideKeyboard();
         }
         else if(v.getId()==R.id.cancelButton)
-        {
+        {//WHEN CANCEL BUTTON IS CLICKED
             Intent intent=new Intent(getApplicationContext(), StartActivity.class);
             startActivity(intent);
             finish();
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     {
 
         if(keyCode==KeyEvent.KEYCODE_ENTER && event.getAction()==KeyEvent.ACTION_DOWN)
-        {
+        {//WHEN THE ENTER KEY IS PRESSED ON THE VIRTUAL KEYBOARD
             loginClicked();
         }
 
@@ -160,7 +160,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void checkUserExistence()
-    {
+    {//CHECK IF USER EXESTS OR NOT
         final String current_user_id=mAuth.getCurrentUser().getUid();
 
         usersRef.addValueEventListener(new ValueEventListener() {

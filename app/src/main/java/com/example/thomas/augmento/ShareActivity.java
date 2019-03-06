@@ -169,6 +169,7 @@ public class ShareActivity extends AppCompatActivity {
                     postsMap.put("Date",saveCurrentDate);
                     postsMap.put("Time",saveCurrentTime);
                     postsMap.put("Description",description);
+                    postsMap.put("Count",localStorage.getStorage("StickerCount"));
 
 
                     for (int i=1;i<=Integer.parseInt(localStorage.getStorage("StickerCount"));i++)

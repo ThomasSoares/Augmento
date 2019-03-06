@@ -29,11 +29,14 @@ import com.google.ar.core.Plane;
 import com.google.ar.core.Session;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.HitTestResult;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,23 +84,18 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
         postsRef= FirebaseDatabase.getInstance().getReference().child("StickerPosts");
 
         modelLoader = new ModelLoader(this);
-        modelLoader.loadModel(getContext(),R.raw.andy);
-
+        modelLoader.loadModel(getContext(),R.raw.flyingsacuer);
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
                     if (andyRenderable == null) {
                         return;
                     }
+                    recyclerView.setVisibility(View.VISIBLE);
 
-                    // Create the Anchor.
-                    //long var1 = Long.parseLong("t:[x:-0.883, y:-1.003, z:-1.719], q:[x:0.00, y:0.33, z:0.00, w:0.94]");
-
-                    Anchor anchor = hitResult.createAnchor();
-
-                    Log.i("ANCHOR",String.valueOf(anchor));
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    Toast.makeText(getContext(), String.valueOf(anchorNode),Toast.LENGTH_LONG).show();
+                    Vector3 vector3=new Vector3(-0.883f, -1.003f, -1.719f);
+                    AnchorNode anchorNode = new AnchorNode();
+                    anchorNode.setLocalPosition(vector3);
                     anchorNode.setParent(arFragment.getArSceneView().getScene());
 
                     // Create the transformable andy and add it to the anchor.
@@ -108,6 +106,7 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
 
                 });
 
+
         //initialize
         displayAllUsers();
 
@@ -117,14 +116,18 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
 
 
 
+
     public void displayAllUsers()
     {
+
         FirebaseRecyclerOptions<StickerViewLayout> posts=
                 new FirebaseRecyclerOptions.Builder<StickerViewLayout>()
                         .setQuery(postsRef, new SnapshotParser<StickerViewLayout>() {
                             @NonNull
                             @Override
                             public StickerViewLayout parseSnapshot(@NonNull DataSnapshot snapshot) {
+
+
                                 return new StickerViewLayout(snapshot.child("Date").getValue().toString(),
                                         snapshot.child("Description").getValue().toString(),
                                         snapshot.child("ProfileImage").getValue().toString(),
@@ -173,6 +176,7 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
 
     @Override
     public void setRenderable(ModelRenderable modelRenderable) {
+        Toast.makeText(getContext(),"SetRenderable",Toast.LENGTH_SHORT).show();
         andyRenderable = modelRenderable;
     }
 
