@@ -42,11 +42,17 @@ public class StickerViewLayoutAdapter extends RecyclerView.Adapter<StickerViewLa
 
 
         }
-
         public void setDescription(String description)
         {
             TextView descriptionText=mView.findViewById(R.id.descriptionTextView);
             descriptionText.setText(description);
+        }
+
+        public void setSticker(Context ctx,String [] stickerArray, ModelLoader modelLoader)
+        {
+
+                modelLoader.loadModel(ctx,R.raw.flyingsacuer);
+
         }
 
     }

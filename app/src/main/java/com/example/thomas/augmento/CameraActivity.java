@@ -1,7 +1,9 @@
 package com.example.thomas.augmento;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -22,6 +24,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +35,7 @@ import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.PixelCopy;
 import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
@@ -39,15 +43,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -82,6 +91,8 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
     private ImageButton augmentButton, cameraButton, videoButton;
     public ImageView stickerImageView;
     int count;
+    Uri photoURI;
+    File photoFile;
 
 
 
@@ -166,9 +177,7 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
         });
 
         cameraButton.setOnClickListener(v->{
-            Bitmap b=Sceenshot.takescreenshotOfRootView(view);
-            Sceenshot sceenshot=new Sceenshot();
-            sceenshot.storeScreenshot(b,"wow1.jpg");
+            takePhoto();
         });
 
 
@@ -180,21 +189,95 @@ public class CameraActivity extends AppCompatActivity implements ModelLoader.Mod
 
 
 
+    private String generateFilename()
+    {
+        String date=new SimpleDateFormat("yyyyMMddHHmmss",java.util.Locale.getDefault()).format(new Date());
 
-
-    public void serializeDataOut(Anchor anchor)throws IOException {
-
-        Object o=null;
-        String fileName= "Test.txt";
-        FileOutputStream fos = new FileOutputStream(fileName);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(anchor);
-        Toast.makeText(getApplicationContext(),"Saved to "+getFilesDir()+"/example.txt",Toast.LENGTH_LONG).show();
-        oos.close();
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+File.separator+"Augmento/"+date+"_augmento.jpg";
     }
 
+    private void saveBitmapToDisk(Bitmap bitmap, String filename) throws IOException {
+
+        File out = new File(filename);
+        if (!out.getParentFile().exists()) {
+            out.getParentFile().mkdirs();
+        }
+        try (FileOutputStream outputStream = new FileOutputStream(filename);
+             ByteArrayOutputStream outputData = new ByteArrayOutputStream()) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputData);
+            outputData.writeTo(outputStream);
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException ex) {
+            throw new IOException("Failed to save bitmap to disk", ex);
+        }
+    }
+
+    public void takePhoto()
+    {
+        final String filename=generateFilename();
+
+        ArSceneView arSceneView=arFragment.getArSceneView();
+        final Bitmap bitmap=Bitmap.createBitmap(arSceneView.getWidth(), arSceneView.getHeight(), Bitmap.Config.ARGB_8888);
+
+        final HandlerThread handlerThread=new HandlerThread("PixelCopier");
+        handlerThread.start();
+
+        PixelCopy.request(arSceneView, bitmap, (copyResult ->
+        {
+            if(copyResult==PixelCopy.SUCCESS)
+            {
+                try
+                {
+                    saveBitmapToDisk(bitmap,filename);
+                }
+                catch (IOException e)
+                {
+                    Toast toast=Toast.makeText(getApplicationContext(), e.toString(),Toast.LENGTH_LONG);
+                    toast.show();
+                    return ;
+                }
 
 
+
+                photoFile=new File(filename);
+
+                CropImage.activity(Uri.fromFile(photoFile))
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(3,4)
+                        .start(this);
+
+            }
+            else
+            {
+                Log.d("CameraAR","Failed to copyPixels"+copyResult);
+                Toast toast = Toast.makeText(getApplicationContext(), "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            handlerThread.quitSafely();
+
+        }), new Handler(handlerThread.getLooper()));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+
+                Intent intent=new Intent(getApplicationContext(), AugmentActivity.class);
+                intent.putExtra("URI",resultUri.toString());
+                startActivity(intent);
+            } else {
+                Toast.makeText(getApplicationContext(), "Error Image cant be cropped", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     public void setRenderable(ModelRenderable modelRenderable) {

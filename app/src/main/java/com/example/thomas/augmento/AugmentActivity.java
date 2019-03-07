@@ -29,6 +29,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -54,6 +55,9 @@ public class AugmentActivity extends AppCompatActivity {
     private String postRandomName;
     private String downloadUrl;
 
+    private File photoFile;
+    private Uri photoUri;
+
     public void initialize() {
         importImageView = findViewById(R.id.importImageView);
         descriptionEditText = findViewById(R.id.descriptionEditText);
@@ -68,6 +72,10 @@ public class AugmentActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         downloadUrl=null;
+
+        //photoFile= new File(getIntent().getExtras().getString("File"));
+        photoUri= Uri.parse(getIntent().getExtras().getString("URI"));
+        importImageView.setImageURI(photoUri);
 
     }
     public void listeners()
@@ -102,11 +110,8 @@ public class AugmentActivity extends AppCompatActivity {
     {
         description=descriptionEditText.getText().toString();
 
-        if(ImageUri==null)
-        {
-            Toast.makeText(getApplicationContext(),"Please select post image!", Toast.LENGTH_SHORT).show();
-        }
-        else if(TextUtils.isEmpty(description))
+
+        if(TextUtils.isEmpty(description))
         {
             descriptionEditText.setError("Cannot be empty");
         }
@@ -129,11 +134,11 @@ public class AugmentActivity extends AppCompatActivity {
 
         postRandomName=currentUserID+saveCurrentDate+saveCurrentTime;
 
-        final StorageReference filePath=postImagesReference.child("Post Images").child(ImageUri.getLastPathSegment()+postRandomName+".jpg");
+        final StorageReference filePath=postImagesReference.child("Post Images").child(photoUri.getLastPathSegment()+postRandomName+".jpg");
 
 
 
-        filePath.putFile(ImageUri).addOnCompleteListener(task -> {
+        filePath.putFile(photoUri).addOnCompleteListener(task -> {
             if(task.isSuccessful())
             {
 
