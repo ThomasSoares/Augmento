@@ -37,7 +37,7 @@ public class FindFriendsAdapter extends RecyclerView.Adapter<FindFriendsAdapter.
 
         public void setProfileImage(Context context, String profileImage)
         {
-            CircleImageView myImage=mView.findViewById(R.id.all_users_profile_image);
+            CircleImageView myImage=mView.findViewById(R.id.alertProfileImage);
             Picasso.with(context).load(profileImage).placeholder(R.drawable.ic_person_black_24dp).into(myImage);
         }
 

@@ -19,6 +19,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,7 +48,10 @@ public class ViewProfileActivity extends AppCompatActivity {
     private DatabaseReference profileUserRef, userRef,postsRef, connRef;
     private FirebaseAuth mAuth;
     private String sendUserID, receiveUserID, CURRENT_STATE;
-    private TextView followerCountTextView, followingCountTextView;
+    private TextView followerCountTextView, followingCountTextView, postCountTextView;
+
+    LocalStorage localStorage;
+    int count=0;
 
     public void initialize()
     {
@@ -58,6 +62,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         followButton=findViewById(R.id.followButton);
         followerCountTextView=findViewById(R.id.followerCountTextView);
         followingCountTextView=findViewById(R.id.followingCountTextView);
+        postCountTextView=findViewById(R.id.postCountTextView);
 
 
 
@@ -72,11 +77,13 @@ public class ViewProfileActivity extends AppCompatActivity {
         layoutManager=new FlexboxLayoutManager(getApplicationContext());
         //layoutManager.canScrollHorizontally();
         layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.SPACE_AROUND);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         CURRENT_STATE="not_friends";
+        localStorage=new LocalStorage(getApplicationContext());
 
     }
 
@@ -224,7 +231,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(),"Error Occured",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Error OccurearFragment.d",Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -246,8 +253,15 @@ public class ViewProfileActivity extends AppCompatActivity {
     {
         FirebaseRecyclerOptions<ProfilePosts> profilePosts=
                 new FirebaseRecyclerOptions.Builder<ProfilePosts>()
-                        .setQuery(postsRef, snapshot -> new ProfilePosts(snapshot.child("PostImage").getValue().toString()))
-                        .build();
+                        .setQuery(postsRef, snapshot -> {
+                            if(snapshot.child("UserId").getValue().toString().equalsIgnoreCase(receiveUserID))
+                            {
+                                ++count;
+                                localStorage.addStorage("PostsCount",String.valueOf(count));
+                            }
+
+                            return new ProfilePosts(snapshot.child("PostImage").getValue().toString(), snapshot.child("UserId").getValue().toString());
+                        }).build();
 
         firebaseRecyclerAdapter=
                 new FirebaseRecyclerAdapter<ProfilePosts, ProfilePostAdapter.ProfilePostsViewHolder>(profilePosts) {
@@ -291,5 +305,6 @@ public class ViewProfileActivity extends AppCompatActivity {
         initialize();
         listeners();
         displayPosts();
+        postCountTextView.setText(localStorage.getStorage("PostsCount"));
     }
 }

@@ -40,6 +40,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -60,15 +62,25 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
     private ModelRenderable andyRenderable;
     private ModelLoader modelLoader;
     LocalStorage ls;
+    int localCountPositions=0;
+    int stickerCountPosition=0;
 
 
     String[] stickerArray;
     String[] postionXArray;
     String[] postionYArray;
     String[] postionZArray;
+    List<String> stickerCountList=new ArrayList<>();
 
-    private final Session session=null;
+    Vector3 vector3;
+    Vector3 vector31;
 
+    ArrayList<String>totalSticker=new ArrayList<>();
+    ArrayList<String>totalPositionX=new ArrayList<>();
+    ArrayList<String>totalPositionY=new ArrayList<>();
+    ArrayList<String>totalPositionZ=new ArrayList<>();
+
+    int i=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,12 +104,29 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
         postsRef= FirebaseDatabase.getInstance().getReference().child("StickerPosts");
 
 
+
         ls=new LocalStorage(getContext());
         modelLoader = new ModelLoader(this);
 
         //initialize
         displayAllUsers();
-        modelLoader.loadModel(getContext(), R.raw.house);
+
+        if (Integer.parseInt(ls.getStorage("PostSticker0")) == R.drawable.house) {
+            modelLoader.loadModel(getContext(), R.raw.house);
+
+        } else if (Integer.parseInt(ls.getStorage("PostSticker0")) == R.drawable.andy) {
+            modelLoader.loadModel(getContext(), R.raw.andy);
+
+        } else if (Integer.parseInt(ls.getStorage("PostSticker0")) == R.drawable.spaceman) {
+            modelLoader.loadModel(getContext(), R.raw.spaceman);
+
+        } else if (Integer.parseInt(ls.getStorage("PostSticker0")) == R.drawable.flyingsaucer) {
+            modelLoader.loadModel(getContext(), R.raw.flyingsacuer);
+
+        } else if (Integer.parseInt(ls.getStorage("PostSticker0")) == R.drawable.uphouse) {
+            modelLoader.loadModel(getContext(), R.raw.uphouse);
+
+        }
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
@@ -106,18 +135,35 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
                     }
                     recyclerView.setVisibility(View.VISIBLE);
 
-                    Vector3 vector3=new Vector3(-0.883f, -1.003f, -1.719f);
+
+                    float xValue= Float.parseFloat(ls.getStorage("PositionX0"));
+                    float yValue= Float.parseFloat(ls.getStorage("PositionY0"));
+                    float zValue= Float.parseFloat(ls.getStorage("PositionZ0"));
+
+                    vector3=new Vector3(xValue, yValue, zValue);
+
                     AnchorNode anchorNode = new AnchorNode();
                     anchorNode.setLocalPosition(vector3);
                     anchorNode.setParent(arFragment.getArSceneView().getScene());
+
+
 
                     // Create the transformable andy and add it to the anchor.
                     TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
                     andy.setParent(anchorNode);
                     andy.setRenderable(andyRenderable);
-                    andy.select();
 
                 });
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -125,45 +171,64 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
         return parentHolder;
     }
 
+    private void testRun() {
+        for(int i=0;i<1;i++)
+        {
+            Toast.makeText(getContext(),ls.getStorage("StickerCounter"+i),Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 
+    private void setAllAnchors(int i) {
+
+
+    }
 
 
     public void displayAllUsers()
     {
-        LocalStorage localStorage=new LocalStorage(getContext());
+        ls.clear();
 
         FirebaseRecyclerOptions<StickerViewLayout> posts=
                 new FirebaseRecyclerOptions.Builder<StickerViewLayout>()
-                        .setQuery(postsRef, new SnapshotParser<StickerViewLayout>() {
-                            @NonNull
-                            @Override
-                            public StickerViewLayout parseSnapshot(@NonNull DataSnapshot snapshot) {
-                                String date=snapshot.child("Date").getValue().toString();
-                                String description=snapshot.child("Description").getValue().toString();
-                                String profileImage=snapshot.child("ProfileImage").getValue().toString();
-                                String time=snapshot.child("Time").getValue().toString();
-                                String userID=snapshot.child("UserId").getValue().toString();
-                                String username=snapshot.child("Username").getValue().toString();
-                                String count=snapshot.child("Count").getValue().toString();
-                                stickerArray=new String[Integer.parseInt(count)];
-                                postionXArray=new String[Integer.parseInt(count)];
-                                postionYArray=new String[Integer.parseInt(count)];
-                                postionZArray=new String[Integer.parseInt(count)];
+                        .setQuery(postsRef, snapshot -> {
+                            String date=snapshot.child("Date").getValue().toString();
+                            String description=snapshot.child("Description").getValue().toString();
+                            String profileImage=snapshot.child("ProfileImage").getValue().toString();
+                            String time=snapshot.child("Time").getValue().toString();
+                            String userID=snapshot.child("UserId").getValue().toString();
+                            String username=snapshot.child("Username").getValue().toString();
+                            String count=snapshot.child("Count").getValue().toString();
+                            stickerArray=new String[Integer.parseInt(count)];
+                            postionXArray=new String[Integer.parseInt(count)];
+                            postionYArray=new String[Integer.parseInt(count)];
+                            postionZArray=new String[Integer.parseInt(count)];
 
-                                for (int i=1;i<=Integer.parseInt(count);i++)
-                                {
-                                    stickerArray[i-1]=snapshot.child("PostSticker"+i).getValue().toString();
-                                    postionXArray[i-1]=snapshot.child("StickerPositionX"+i).getValue().toString();
-                                    postionYArray[i-1]=snapshot.child("StickerPositionY"+i).getValue().toString();
-                                    postionZArray[i-1]=snapshot.child("StickerPositionZ"+i).getValue().toString();
+                            ls.addStorage("StickerCounter"+stickerCountPosition,count);
+                            stickerCountPosition++;
+                            for (int i=1;i<=Integer.parseInt(snapshot.child("Count").getValue().toString());i++)
+                            {
+                                stickerArray[i-1]=snapshot.child("PostSticker"+i).getValue().toString();
+                                postionXArray[i-1]=snapshot.child("StickerPositionX"+i).getValue().toString();
+                                postionYArray[i-1]=snapshot.child("StickerPositionY"+i).getValue().toString();
+                                postionZArray[i-1]=snapshot.child("StickerPositionZ"+i).getValue().toString();
 
-                                    localStorage.addStorage("PostSticker"+i,stickerArray[i-1]);
-                                    //modelLoader.loadModel(getContext(), Integer.parseInt(snapshot.child("PostSticker"+i).getValue().toString()));
-                                }
-
-                                return new StickerViewLayout(date,description,profileImage,time,userID,username,stickerArray,postionXArray,postionYArray,postionZArray);
+                                ls.addStorage("PostSticker"+localCountPositions,snapshot.child("PostSticker"+i).getValue().toString());
+                                ls.addStorage("PositionX"+localCountPositions, snapshot.child("StickerPositionX"+i).getValue().toString());
+                                ls.addStorage("PositionY"+localCountPositions, snapshot.child("StickerPositionY"+i).getValue().toString());
+                                ls.addStorage("PositionZ"+localCountPositions, snapshot.child("StickerPositionZ"+i).getValue().toString());
+                                ++localCountPositions;
                             }
+                            //Log.i("Individual",stickerArray.toString());
+                            totalSticker.addAll(Arrays.asList(stickerArray));
+                            totalPositionX.addAll(Arrays.asList(postionXArray));
+                            totalPositionY.addAll(Arrays.asList(postionYArray));
+                            totalPositionZ.addAll(Arrays.asList(postionZArray));
+                            Log.i("Total Sticker",totalPositionX.toString());
+
+
+                            return new StickerViewLayout(date,description,profileImage,time,userID,username,stickerArray,postionXArray,postionYArray,postionZArray);
                         })
                 .build();
 
@@ -175,12 +240,15 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
                 myViewHolder.setProfileImage(getContext(),stickerViewLayout.getProfileImage());
                 myViewHolder.setSticker(getContext(),stickerViewLayout.getStickerArray(),modelLoader);
 
+
             }
 
             @NonNull
             @Override
             public StickerViewLayoutAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view =LayoutInflater.from(parent.getContext()).inflate(R.layout.sticker_post_layout, parent, false);
+
+
 
                 return new StickerViewLayoutAdapter.MyViewHolder(view);
             }
@@ -207,7 +275,6 @@ public class SearchFragment extends Fragment implements ModelLoader.ModelLoaderC
 
     @Override
     public void setRenderable(ModelRenderable modelRenderable) {
-        Toast.makeText(getContext(),"SetRenderable",Toast.LENGTH_SHORT).show();
         andyRenderable = modelRenderable;
     }
 

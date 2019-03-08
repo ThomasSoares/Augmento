@@ -52,12 +52,12 @@ public class ProfileFragment extends Fragment {
 
     View parentHolder;
     CircleImageView editImageView, profileImageView;
-    TextView nameTextView, descriptionTextView;
+    TextView nameTextView, descriptionTextView, followerCountTextView,followingCountTextView,postCountTextView;
 
     ProgressBar profilePicProgressBar;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference UserRef, postsRef;
+    private DatabaseReference UserRef, postsRef, connRef;
     private StorageReference UserProfileImageRef;
     String currentUserID, receiverUserID;
     String downloadUrl=null;
@@ -70,12 +70,17 @@ public class ProfileFragment extends Fragment {
     FirebaseRecyclerAdapter<ProfilePosts, ProfilePostAdapter.ProfilePostsViewHolder> firebaseRecyclerAdapter;
 
 
+    int count=0;
+
     public void initialize()
     {
         editImageView=parentHolder.findViewById(R.id.editImageView);
         profileImageView=parentHolder.findViewById(R.id.profileImageView1);
         nameTextView=parentHolder.findViewById(R.id.nameTextView);
         descriptionTextView=parentHolder.findViewById(R.id.descriptionTextView);
+        followerCountTextView=parentHolder.findViewById(R.id.followerCountTextView);
+        followingCountTextView=parentHolder.findViewById(R.id.followingCountTextView);
+        postCountTextView=parentHolder.findViewById(R.id.postCountTextView);
 
         localStorage=new LocalStorage(getContext());
         profilePicProgressBar=parentHolder.findViewById(R.id.profilePicProgressBar);
@@ -86,15 +91,20 @@ public class ProfileFragment extends Fragment {
         UserRef=FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
         UserProfileImageRef=FirebaseStorage.getInstance().getReference().child("Profile Images");
         postsRef= FirebaseDatabase.getInstance().getReference().child("Posts");
+        connRef=FirebaseDatabase.getInstance().getReference().child("Connection").child(currentUserID);
+
 
         recyclerView=parentHolder.findViewById(R.id.profileRecyclerView);
         layoutManager=new FlexboxLayoutManager(getContext());
         //layoutManager.canScrollHorizontally();
         layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.SPACE_AROUND);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        setFollowerCount();
+        setFollowingCount();
     }
 
     public void listeners()
@@ -116,6 +126,38 @@ public class ProfileFragment extends Fragment {
                     descriptionTextView.setText(description);
 
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setFollowerCount()
+    {
+        connRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int followersCount=(int) dataSnapshot.child("Followers").getChildrenCount();
+                followerCountTextView.setText(String.valueOf(followersCount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setFollowingCount()
+    {
+        connRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int followersCount=(int) dataSnapshot.child("Following").getChildrenCount();
+                followingCountTextView.setText(String.valueOf(followersCount));
             }
 
             @Override
@@ -218,16 +260,27 @@ public class ProfileFragment extends Fragment {
 
     public void displayPosts()
     {
+
         FirebaseRecyclerOptions<ProfilePosts> profilePosts=
                 new FirebaseRecyclerOptions.Builder<ProfilePosts>()
-                .setQuery(postsRef, snapshot -> new ProfilePosts(snapshot.child("PostImage").getValue().toString()))
-                .build();
+                .setQuery(postsRef, snapshot -> {
+                    if(snapshot.child("UserId").getValue().toString().equalsIgnoreCase(currentUserID))
+                    {
+                        ++count;
+                        localStorage.addStorage("PostsCount",String.valueOf(count));
+                    }
+
+
+                    return new ProfilePosts(snapshot.child("PostImage").getValue().toString(), snapshot.child("UserId").getValue().toString());
+                }).build();
 
         firebaseRecyclerAdapter=
                 new FirebaseRecyclerAdapter<ProfilePosts, ProfilePostAdapter.ProfilePostsViewHolder>(profilePosts) {
                     @Override
                     protected void onBindViewHolder(@NonNull ProfilePostAdapter.ProfilePostsViewHolder profilePostsViewHolder, int i, @NonNull ProfilePosts profilePosts) {
+
                         profilePostsViewHolder.setPostImageView(getContext(),profilePosts.getPostImage());
+
 
                     }
 
@@ -238,6 +291,8 @@ public class ProfileFragment extends Fragment {
 
                         return new ProfilePostAdapter.ProfilePostsViewHolder(view);
                     }
+
+
                 };
 
         recyclerView.setAdapter(firebaseRecyclerAdapter);
@@ -271,6 +326,7 @@ public class ProfileFragment extends Fragment {
         listeners();
 
         displayPosts();
+        postCountTextView.setText(localStorage.getStorage("PostsCount"));
 
         return parentHolder;
     }

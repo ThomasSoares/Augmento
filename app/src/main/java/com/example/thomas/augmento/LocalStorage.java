@@ -30,7 +30,4 @@ public class LocalStorage
         sharedPreferences.edit().clear();
         sharedPreferences.edit().commit();
     }
-
-
-
 }

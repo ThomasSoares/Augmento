@@ -42,7 +42,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     ProgressBar homeProgressBar;
-    private DatabaseReference postsRef, likesRef;
+    private DatabaseReference postsRef, likesRef, alertRef;
     FirebaseRecyclerAdapter <Posts, MyViewHolder> firebaseRecyclerAdapter;
     int count;
     boolean likeChecker;
@@ -64,6 +64,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(postAdapter);
         postsRef= FirebaseDatabase.getInstance().getReference().child("Posts");
         likesRef=FirebaseDatabase.getInstance().getReference().child("Likes");
+        likesRef=FirebaseDatabase.getInstance().getReference().child("Alerts");
         count=0;
         likeChecker=false;
     }
@@ -161,6 +162,8 @@ public class HomeFragment extends Fragment {
 
                                 }
                             });
+
+
                         });
 
                         homeProgressBar.setVisibility(View.GONE);
